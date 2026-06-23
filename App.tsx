@@ -26,6 +26,11 @@ import {
   buildSentence,
   tokenizeTurkish,
 } from './src/utils/translation';
+import {
+  createStabilizerState,
+  evaluatePredictionCandidate,
+  resetStabilizerState,
+} from './src/utils/predictionStabilizer';
 
 function App() {
   return (
@@ -63,7 +68,7 @@ function MainApp() {
       message: 'Hazır',
     });
   const captureWindowRef = useRef<(() => Promise<string[]>) | null>(null);
-  const lastAcceptedGlossRef = useRef<string | null>(null);
+  const stabilizerRef = useRef(createStabilizerState());
   const [avatarText, setAvatarText] = useState('ben seni seviyorum');
   const [avatarGlosses, setAvatarGlosses] = useState(['ben', 'sen', 'sevmek']);
   const [avatarIndex, setAvatarIndex] = useState(0);
@@ -109,16 +114,7 @@ function MainApp() {
     });
   }, []);
 
-  const acceptPrediction = useCallback((next: Prediction) => {
-    if (next.confidence < confidenceThreshold) {
-      return;
-    }
-    if (lastAcceptedGlossRef.current === next.gloss) {
-      setCurrentPrediction(next);
-      return;
-    }
-    lastAcceptedGlossRef.current = next.gloss;
-    setCurrentPrediction(next);
+  const commitAcceptedPrediction = useCallback((next: Prediction) => {
     setCommittedWords(previous => {
       const nextWords = [...previous, next.gloss];
       const meaningfulSentence = buildMeaningfulSentence(nextWords);
@@ -127,7 +123,7 @@ function MainApp() {
       }
       return nextWords;
     });
-  }, [autoSpeak, confidenceThreshold, speakText]);
+  }, [autoSpeak, speakText]);
 
   const runLiveInferenceTick = useCallback(async () => {
     const captureWindow = captureWindowRef.current;
@@ -148,18 +144,33 @@ function MainApp() {
       const framePaths = await captureWindow();
       const prediction = await predictFrameFiles(backendUrl, framePaths);
       if (prediction.hasSign && prediction.gloss && prediction.display) {
-        acceptPrediction({
+        const livePrediction: Prediction = {
           gloss: prediction.gloss,
           display: prediction.display,
           confidence: prediction.confidence,
-        });
+          top5: prediction.top5,
+        };
+        setCurrentPrediction(livePrediction);
+
+        const stabilization = evaluatePredictionCandidate(
+          stabilizerRef.current,
+          prediction,
+          confidenceThreshold,
+        );
+        if (stabilization.accepted) {
+          commitAcceptedPrediction(stabilization.prediction);
+        }
+
         setLiveInferenceStatus(previous => ({
           ...previous,
           busy: false,
-          message: `${prediction.display} (${Math.round(prediction.confidence * 100)}%)`,
+          message: stabilization.accepted
+            ? `Kabul edildi: ${prediction.display}`
+            : stabilization.reason,
         }));
       } else {
         setCurrentPrediction(null);
+        resetStabilizerState(stabilizerRef.current);
         setLiveInferenceStatus(previous => ({
           ...previous,
           busy: false,
@@ -173,7 +184,7 @@ function MainApp() {
         message: error instanceof Error ? error.message : 'Canlı tahmin hatası',
       }));
     }
-  }, [acceptPrediction, backendUrl]);
+  }, [backendUrl, commitAcceptedPrediction, confidenceThreshold]);
 
   function toggleLiveInference() {
     setLiveInferenceStatus(previous => ({
@@ -239,7 +250,7 @@ function MainApp() {
 
     setCommittedWords([]);
     setCurrentPrediction(null);
-    lastAcceptedGlossRef.current = null;
+    stabilizerRef.current = createStabilizerState();
   }
 
   function removeLastWord() {

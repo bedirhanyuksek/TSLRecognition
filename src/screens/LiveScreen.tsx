@@ -51,6 +51,8 @@ export function LiveScreen({
   onClear,
   onUndo,
 }: Props) {
+  const alternatives = currentPrediction?.top5?.slice(1, 4) ?? [];
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -95,11 +97,15 @@ export function LiveScreen({
         </View>
         <View style={styles.altRow}>
           <Text style={styles.smallMuted}>alternatif</Text>
-          {['okul', 'dakika', 'yardım'].map(item => (
-            <Text key={item} style={styles.neutralChip}>
-              {item}
-            </Text>
-          ))}
+          {alternatives.length === 0 ? (
+            <Text style={styles.neutralChip}>-</Text>
+          ) : (
+            alternatives.map(item => (
+              <Text key={item.gloss} style={styles.neutralChip}>
+                {item.display}
+              </Text>
+            ))
+          )}
         </View>
       </Card>
 

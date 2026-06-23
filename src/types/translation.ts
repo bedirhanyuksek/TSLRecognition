@@ -6,6 +6,17 @@ export type Prediction = {
   gloss: string;
   display: string;
   confidence: number;
+  top5?: PredictionAlternative[];
+};
+
+export type PredictionAlternative = {
+  gloss: string;
+  display: string;
+  confidence: number;
+};
+
+export type PredictionCandidate = Prediction & {
+  top5: PredictionAlternative[];
 };
 
 export type HistoryItem = {
