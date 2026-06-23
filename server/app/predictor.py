@@ -61,6 +61,17 @@ class TIDPredictor:
             arrays=bundle.arrays,
         )
 
+    def predict_frame_bytes(self, frame_bytes: list[bytes]) -> ImagePredictionResponse:
+        if not frame_bytes:
+            raise ValueError("At least one frame is required")
+        frames = [decode_image_bytes(payload) for payload in frame_bytes]
+        bundle = self.extractor.extract_from_frames(frames)
+        return self._predict_features(
+            word_features=bundle.word_features,
+            gate_features=bundle.gate_features,
+            arrays=bundle.arrays,
+        )
+
     def _predict_features(
         self,
         *,

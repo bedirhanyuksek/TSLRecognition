@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {StatusBar, StyleSheet, useWindowDimensions, View} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {TabBar} from './src/components/TabBar';
@@ -9,6 +9,7 @@ import {SettingsScreen} from './src/screens/SettingsScreen';
 import {
   checkBackendHealth,
   discoverBackendUrl,
+  predictFrameFiles,
 } from './src/services/inferenceService';
 import {speakTurkish} from './src/services/speechService';
 import {palette} from './src/theme/palette';
@@ -16,10 +17,15 @@ import type {
   BackendStatus,
   CameraPosition,
   HistoryItem,
+  LiveInferenceStatus,
   Prediction,
   TabKey,
 } from './src/types/translation';
-import {buildSentence, tokenizeTurkish} from './src/utils/translation';
+import {
+  buildMeaningfulSentence,
+  buildSentence,
+  tokenizeTurkish,
+} from './src/utils/translation';
 
 function App() {
   return (
@@ -50,6 +56,14 @@ function MainApp() {
     state: 'idle',
     message: 'Test edilmedi',
   });
+  const [liveInferenceStatus, setLiveInferenceStatus] =
+    useState<LiveInferenceStatus>({
+      running: false,
+      busy: false,
+      message: 'Hazır',
+    });
+  const captureWindowRef = useRef<(() => Promise<string[]>) | null>(null);
+  const lastAcceptedGlossRef = useRef<string | null>(null);
   const [avatarText, setAvatarText] = useState('ben seni seviyorum');
   const [avatarGlosses, setAvatarGlosses] = useState(['ben', 'sen', 'sevmek']);
   const [avatarIndex, setAvatarIndex] = useState(0);
@@ -89,6 +103,100 @@ function MainApp() {
     }
   }
 
+  const speakText = useCallback((text: string) => {
+    speakTurkish(text).catch(error => {
+      console.warn('TextToSpeech error', error);
+    });
+  }, []);
+
+  const acceptPrediction = useCallback((next: Prediction) => {
+    if (next.confidence < confidenceThreshold) {
+      return;
+    }
+    if (lastAcceptedGlossRef.current === next.gloss) {
+      setCurrentPrediction(next);
+      return;
+    }
+    lastAcceptedGlossRef.current = next.gloss;
+    setCurrentPrediction(next);
+    setCommittedWords(previous => {
+      const nextWords = [...previous, next.gloss];
+      const meaningfulSentence = buildMeaningfulSentence(nextWords);
+      if (autoSpeak && meaningfulSentence) {
+        speakText(meaningfulSentence);
+      }
+      return nextWords;
+    });
+  }, [autoSpeak, confidenceThreshold, speakText]);
+
+  const runLiveInferenceTick = useCallback(async () => {
+    const captureWindow = captureWindowRef.current;
+    if (!captureWindow) {
+      setLiveInferenceStatus(previous => ({
+        ...previous,
+        message: 'Kamera hazır değil',
+      }));
+      return;
+    }
+
+    setLiveInferenceStatus(previous => ({
+      ...previous,
+      busy: true,
+      message: 'Frame penceresi işleniyor',
+    }));
+    try {
+      const framePaths = await captureWindow();
+      const prediction = await predictFrameFiles(backendUrl, framePaths);
+      if (prediction.hasSign && prediction.gloss && prediction.display) {
+        acceptPrediction({
+          gloss: prediction.gloss,
+          display: prediction.display,
+          confidence: prediction.confidence,
+        });
+        setLiveInferenceStatus(previous => ({
+          ...previous,
+          busy: false,
+          message: `${prediction.display} (${Math.round(prediction.confidence * 100)}%)`,
+        }));
+      } else {
+        setCurrentPrediction(null);
+        setLiveInferenceStatus(previous => ({
+          ...previous,
+          busy: false,
+          message: prediction.error || 'İşaret yok',
+        }));
+      }
+    } catch (error) {
+      setLiveInferenceStatus(previous => ({
+        ...previous,
+        busy: false,
+        message: error instanceof Error ? error.message : 'Canlı tahmin hatası',
+      }));
+    }
+  }, [acceptPrediction, backendUrl]);
+
+  function toggleLiveInference() {
+    setLiveInferenceStatus(previous => ({
+      running: !previous.running,
+      busy: false,
+      message: !previous.running ? 'Başlatıldı' : 'Durduruldu',
+    }));
+  }
+
+  useEffect(() => {
+    if (!liveInferenceStatus.running || liveInferenceStatus.busy) {
+      return;
+    }
+    const timeout = setTimeout(() => {
+      runLiveInferenceTick();
+    }, 250);
+    return () => clearTimeout(timeout);
+  }, [
+    liveInferenceStatus.busy,
+    liveInferenceStatus.running,
+    runLiveInferenceTick,
+  ]);
+
   async function autoDiscoverBackend() {
     setBackendStatus({state: 'checking', message: 'Backend aranıyor'});
     try {
@@ -113,12 +221,6 @@ function MainApp() {
     speakText(naturalSentence || fallback);
   }
 
-  function speakText(text: string) {
-    speakTurkish(text).catch(error => {
-      console.warn('TextToSpeech error', error);
-    });
-  }
-
   function clearSession() {
     if (committedWords.length > 0) {
       setHistory(previous => [
@@ -137,6 +239,7 @@ function MainApp() {
 
     setCommittedWords([]);
     setCurrentPrediction(null);
+    lastAcceptedGlossRef.current = null;
   }
 
   function removeLastWord() {
@@ -162,9 +265,14 @@ function MainApp() {
             naturalSentence={naturalSentence}
             autoSpeak={autoSpeak}
             backendStatus={backendStatus}
+            liveInferenceStatus={liveInferenceStatus}
             onCameraPositionChange={setCameraPosition}
+            onCaptureWindowReady={captureWindow => {
+              captureWindowRef.current = captureWindow;
+            }}
             onAutoSpeakChange={setAutoSpeak}
             onMock={testBackend}
+            onLiveToggle={toggleLiveInference}
             onSpeak={speakCurrentOutput}
             onClear={clearSession}
             onUndo={removeLastWord}

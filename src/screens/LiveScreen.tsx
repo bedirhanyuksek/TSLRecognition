@@ -6,7 +6,12 @@ import {GlossChip} from '../components/GlossChip';
 import {PrimaryButton} from '../components/PrimaryButton';
 import {SectionLabel} from '../components/SectionLabel';
 import {palette} from '../theme/palette';
-import type {BackendStatus, CameraPosition, Prediction} from '../types/translation';
+import type {
+  BackendStatus,
+  CameraPosition,
+  LiveInferenceStatus,
+  Prediction,
+} from '../types/translation';
 import {percent} from '../utils/format';
 
 type Props = {
@@ -17,9 +22,12 @@ type Props = {
   naturalSentence: string;
   autoSpeak: boolean;
   backendStatus: BackendStatus;
+  liveInferenceStatus: LiveInferenceStatus;
   onCameraPositionChange: (position: CameraPosition) => void;
+  onCaptureWindowReady: (captureWindow: () => Promise<string[]>) => void;
   onAutoSpeakChange: (value: boolean) => void;
   onMock: () => void;
+  onLiveToggle: () => void;
   onSpeak: () => void;
   onClear: () => void;
   onUndo: () => void;
@@ -33,9 +41,12 @@ export function LiveScreen({
   naturalSentence,
   autoSpeak,
   backendStatus,
+  liveInferenceStatus,
   onCameraPositionChange,
+  onCaptureWindowReady,
   onAutoSpeakChange,
   onMock,
+  onLiveToggle,
   onSpeak,
   onClear,
   onUndo,
@@ -57,13 +68,18 @@ export function LiveScreen({
         prediction={currentPrediction}
         cameraPosition={cameraPosition}
         onCameraPositionChange={onCameraPositionChange}
+        onCaptureWindowReady={onCaptureWindowReady}
       />
 
       <Card>
         <View style={styles.backendRow}>
-          <Text style={styles.backendLabel}>Backend</Text>
+          <Text style={styles.backendLabel}>
+            {liveInferenceStatus.running ? 'Canlı tahmin' : 'Backend'}
+          </Text>
           <Text style={[styles.backendValue, styles[backendStatus.state]]}>
-            {backendStatus.message}
+            {liveInferenceStatus.running
+              ? liveInferenceStatus.message
+              : backendStatus.message}
           </Text>
         </View>
       </Card>
@@ -108,8 +124,17 @@ export function LiveScreen({
       </Card>
 
       <View style={styles.actionRow}>
-        <PrimaryButton label="Backend Test" onPress={onMock} style={styles.flexButton} />
+        <PrimaryButton
+          label={liveInferenceStatus.running ? 'Canlıyı Durdur' : 'Canlıyı Başlat'}
+          onPress={onLiveToggle}
+          style={styles.flexButton}
+          variant={liveInferenceStatus.running ? 'danger' : 'primary'}
+        />
         <PrimaryButton label="Seslendir" variant="secondary" onPress={onSpeak} />
+      </View>
+
+      <View style={styles.actionRow}>
+        <PrimaryButton label="Backend Test" onPress={onMock} style={styles.flexButton} variant="secondary" />
       </View>
 
       <View style={styles.actionRow}>

@@ -19,3 +19,9 @@ export type BackendStatus = {
   state: 'idle' | 'checking' | 'ready' | 'error';
   message: string;
 };
+
+export type LiveInferenceStatus = {
+  running: boolean;
+  busy: boolean;
+  message: string;
+};

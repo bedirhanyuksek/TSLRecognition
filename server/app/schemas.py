@@ -29,3 +29,7 @@ class ImagePredictionResponse(BaseModel):
     top5: list[TopPrediction]
     error: str | None = None
     debug: dict | None = None
+
+
+class FramePredictionResponse(ImagePredictionResponse):
+    frameCount: int

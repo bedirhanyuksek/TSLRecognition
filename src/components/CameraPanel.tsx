@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {
   Camera,
+  type CameraRef,
   useCameraDevice,
   useCameraPermission,
 } from 'react-native-vision-camera';
@@ -14,6 +15,7 @@ type Props = {
   prediction: Prediction | null;
   cameraPosition: CameraPosition;
   onCameraPositionChange: (position: CameraPosition) => void;
+  onCaptureWindowReady?: (captureWindow: () => Promise<string[]>) => void;
 };
 
 export function CameraPanel({
@@ -21,7 +23,9 @@ export function CameraPanel({
   prediction,
   cameraPosition,
   onCameraPositionChange,
+  onCaptureWindowReady,
 }: Props) {
+  const cameraRef = useRef<CameraRef>(null);
   const device = useCameraDevice(cameraPosition);
   const {canRequestPermission, hasPermission, requestPermission} =
     useCameraPermission();
@@ -66,10 +70,38 @@ export function CameraPanel({
     onCameraPositionChange(cameraPosition === 'front' ? 'back' : 'front');
   }
 
+  async function captureFrameWindow() {
+    const camera = cameraRef.current;
+    if (!camera) {
+      throw new Error('Kamera hazır değil');
+    }
+
+    const framePaths: string[] = [];
+    for (let index = 0; index < 8; index += 1) {
+      const image = await camera.takeSnapshot();
+      const resized = image.width > 640 ? await image.resizeAsync(640, Math.round((image.height / image.width) * 640)) : image;
+      const path = await resized.saveToTemporaryFileAsync('jpg', 70);
+      framePaths.push(path);
+      if (resized !== image) {
+        resized.dispose();
+      }
+      image.dispose();
+      await new Promise<void>(resolve => {
+        setTimeout(resolve, 90);
+      });
+    }
+    return framePaths;
+  }
+
+  useEffect(() => {
+    onCaptureWindowReady?.(captureFrameWindow);
+  });
+
   return (
     <View style={[styles.cameraBox, {height}]}>
       {canShowCamera && (
         <Camera
+          ref={cameraRef}
           device={device}
           isActive
           resizeMode="cover"

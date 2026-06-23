@@ -21,6 +21,7 @@ export type BackendPrediction = {
     confidence: number;
   }>;
   error?: string | null;
+  frameCount?: number;
 };
 
 const REQUEST_TIMEOUT_MS = 1200;
@@ -139,6 +140,28 @@ export async function predictImage(
   });
   if (!response.ok) {
     throw new Error(`Image prediction failed: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function predictFrameFiles(
+  baseUrl: string,
+  framePaths: string[],
+): Promise<BackendPrediction> {
+  const payload = new FormData();
+  framePaths.forEach((path, index) => {
+    payload.append('frames', {
+      uri: `file://${path}`,
+      name: `frame_${index}.jpg`,
+      type: 'image/jpeg',
+    } as unknown as Blob);
+  });
+  const response = await fetch(`${normalizeBaseUrl(baseUrl)}/predict/frames`, {
+    method: 'POST',
+    body: payload,
+  });
+  if (!response.ok) {
+    throw new Error(`Frame prediction failed: ${response.status}`);
   }
   return response.json();
 }
