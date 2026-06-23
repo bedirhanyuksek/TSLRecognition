@@ -28,3 +28,4 @@ class ImagePredictionResponse(BaseModel):
     confidence: float
     top5: list[TopPrediction]
     error: str | None = None
+    debug: dict | None = None

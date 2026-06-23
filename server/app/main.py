@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from fastapi import FastAPI, File, UploadFile
+from functools import lru_cache
+
+from fastapi import FastAPI, File, HTTPException, UploadFile
 
 from .config import get_settings
+from .predictor import TIDPredictor
 from .schemas import HealthResponse, ImagePredictionResponse, ModelStatus
 
 app = FastAPI(title="TID Sign Inference Backend", version="0.1.0")
@@ -15,6 +18,17 @@ def model_status() -> ModelStatus:
         sign_gate=settings.sign_gate_model_path.is_file(),
         class_names=settings.class_names_path.is_file(),
         holistic_model=settings.holistic_model_path.is_file(),
+    )
+
+
+@lru_cache(maxsize=1)
+def get_predictor() -> TIDPredictor:
+    settings = get_settings()
+    return TIDPredictor(
+        word_model_path=settings.word_model_path,
+        sign_gate_model_path=settings.sign_gate_model_path,
+        class_names_path=settings.class_names_path,
+        holistic_model_path=settings.holistic_model_path,
     )
 
 
@@ -31,12 +45,12 @@ def health() -> HealthResponse:
 async def predict_image(
     image: UploadFile = File(...),
 ) -> ImagePredictionResponse:
-    await image.read()
-    return ImagePredictionResponse(
-        hasSign=False,
-        gloss=None,
-        display=None,
-        confidence=0.0,
-        top5=[],
-        error="Inference pipeline is not wired yet.",
-    )
+    image_bytes = await image.read()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Image file is empty")
+    try:
+        return get_predictor().predict_image_bytes(image_bytes)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=503, detail=f"Model asset missing: {error}") from error
