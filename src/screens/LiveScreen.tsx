@@ -6,7 +6,7 @@ import {GlossChip} from '../components/GlossChip';
 import {PrimaryButton} from '../components/PrimaryButton';
 import {SectionLabel} from '../components/SectionLabel';
 import {palette} from '../theme/palette';
-import type {CameraPosition, Prediction} from '../types/translation';
+import type {BackendStatus, CameraPosition, Prediction} from '../types/translation';
 import {percent} from '../utils/format';
 
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
   committedWords: string[];
   naturalSentence: string;
   autoSpeak: boolean;
+  backendStatus: BackendStatus;
   onCameraPositionChange: (position: CameraPosition) => void;
   onAutoSpeakChange: (value: boolean) => void;
   onMock: () => void;
@@ -31,6 +32,7 @@ export function LiveScreen({
   committedWords,
   naturalSentence,
   autoSpeak,
+  backendStatus,
   onCameraPositionChange,
   onAutoSpeakChange,
   onMock,
@@ -56,6 +58,15 @@ export function LiveScreen({
         cameraPosition={cameraPosition}
         onCameraPositionChange={onCameraPositionChange}
       />
+
+      <Card>
+        <View style={styles.backendRow}>
+          <Text style={styles.backendLabel}>Backend</Text>
+          <Text style={[styles.backendValue, styles[backendStatus.state]]}>
+            {backendStatus.message}
+          </Text>
+        </View>
+      </Card>
 
       <Card>
         <View style={styles.predictionRow}>
@@ -97,7 +108,7 @@ export function LiveScreen({
       </Card>
 
       <View style={styles.actionRow}>
-        <PrimaryButton label="Mock Tahmin" onPress={onMock} style={styles.flexButton} />
+        <PrimaryButton label="Backend Test" onPress={onMock} style={styles.flexButton} />
         <PrimaryButton label="Seslendir" variant="secondary" onPress={onSpeak} />
       </View>
 
@@ -158,6 +169,35 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  backendRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  backendLabel: {
+    color: palette.secondary,
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  backendValue: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: '800',
+    marginLeft: 10,
+    textAlign: 'right',
+  },
+  idle: {
+    color: palette.tertiary,
+  },
+  checking: {
+    color: palette.secondary,
+  },
+  ready: {
+    color: palette.success,
+  },
+  error: {
+    color: palette.danger,
   },
   bigPrediction: {
     color: palette.text,

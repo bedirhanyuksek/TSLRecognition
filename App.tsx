@@ -2,24 +2,21 @@ import React, {useMemo, useState} from 'react';
 import {StatusBar, StyleSheet, useWindowDimensions, View} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {TabBar} from './src/components/TabBar';
-import {mockPredictions} from './src/data/mockPredictions';
 import {AvatarScreen} from './src/screens/AvatarScreen';
 import {HistoryScreen} from './src/screens/HistoryScreen';
 import {LiveScreen} from './src/screens/LiveScreen';
 import {SettingsScreen} from './src/screens/SettingsScreen';
+import {checkBackendHealth} from './src/services/inferenceService';
 import {speakTurkish} from './src/services/speechService';
 import {palette} from './src/theme/palette';
 import type {
+  BackendStatus,
   CameraPosition,
   HistoryItem,
   Prediction,
   TabKey,
 } from './src/types/translation';
-import {
-  buildMeaningfulSentence,
-  buildSentence,
-  tokenizeTurkish,
-} from './src/utils/translation';
+import {buildSentence, tokenizeTurkish} from './src/utils/translation';
 
 function App() {
   return (
@@ -33,7 +30,6 @@ function MainApp() {
   const insets = useSafeAreaInsets();
   const {height} = useWindowDimensions();
   const [tab, setTab] = useState<TabKey>('live');
-  const [predictionIndex, setPredictionIndex] = useState(0);
   const [currentPrediction, setCurrentPrediction] = useState<Prediction | null>(
     null,
   );
@@ -44,6 +40,11 @@ function MainApp() {
     useState<CameraPosition>('front');
   const [confidenceThreshold, setConfidenceThreshold] = useState(0.7);
   const [modelMode, setModelMode] = useState<'server' | 'device'>('server');
+  const [backendUrl, setBackendUrl] = useState('http://192.168.1.4:8000');
+  const [backendStatus, setBackendStatus] = useState<BackendStatus>({
+    state: 'idle',
+    message: 'Test edilmedi',
+  });
   const [avatarText, setAvatarText] = useState('ben seni seviyorum');
   const [avatarGlosses, setAvatarGlosses] = useState(['ben', 'sen', 'sevmek']);
   const [avatarIndex, setAvatarIndex] = useState(0);
@@ -56,23 +57,31 @@ function MainApp() {
   const activeAvatarGloss = avatarGlosses[avatarIndex] ?? '-';
   const liveCameraHeight = Math.min(430, Math.max(372, Math.round(height * 0.48)));
 
-  function simulatePrediction() {
-    const next = mockPredictions[predictionIndex % mockPredictions.length];
-    setPredictionIndex(predictionIndex + 1);
-    setCurrentPrediction(next);
-
-    setCommittedWords(previous => {
-      if (previous[previous.length - 1] === next.gloss) {
-        return previous;
-      }
-
-      const nextWords = [...previous, next.gloss];
-      const meaningfulSentence = buildMeaningfulSentence(nextWords);
-      if (autoSpeak && meaningfulSentence) {
-        speakText(meaningfulSentence);
-      }
-      return nextWords;
-    });
+  async function testBackend() {
+    setBackendStatus({state: 'checking', message: 'Kontrol ediliyor'});
+    try {
+      const health = await checkBackendHealth(backendUrl);
+      const ready = Object.values(health.models).every(Boolean);
+      setBackendStatus({
+        state: ready ? 'ready' : 'error',
+        message: ready ? 'Model hazır' : 'Model dosyası eksik',
+      });
+      setCurrentPrediction(
+        ready
+          ? {
+              gloss: 'backend_hazir',
+              display: 'Backend hazır',
+              confidence: 1,
+            }
+          : null,
+      );
+    } catch (error) {
+      setBackendStatus({
+        state: 'error',
+        message: error instanceof Error ? error.message : 'Backend hatası',
+      });
+      setCurrentPrediction(null);
+    }
   }
 
   function speakCurrentOutput() {
@@ -128,9 +137,10 @@ function MainApp() {
             committedWords={committedWords}
             naturalSentence={naturalSentence}
             autoSpeak={autoSpeak}
+            backendStatus={backendStatus}
             onCameraPositionChange={setCameraPosition}
             onAutoSpeakChange={setAutoSpeak}
-            onMock={simulatePrediction}
+            onMock={testBackend}
             onSpeak={speakCurrentOutput}
             onClear={clearSession}
             onUndo={removeLastWord}
@@ -163,10 +173,12 @@ function MainApp() {
             autoSpeak={autoSpeak}
             cameraPosition={cameraPosition}
             confidenceThreshold={confidenceThreshold}
+            backendUrl={backendUrl}
             modelMode={modelMode}
             onAutoSpeakChange={setAutoSpeak}
             onCameraPositionChange={setCameraPosition}
             onConfidenceThresholdChange={setConfidenceThreshold}
+            onBackendUrlChange={setBackendUrl}
             onModelModeChange={setModelMode}
           />
         )}

@@ -122,9 +122,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   cameraGrid: {
-    ...StyleSheet.absoluteFillObject,
     borderColor: 'rgba(255,255,255,0.08)',
     borderWidth: 1,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
   },
   cameraTopBar: {
     flexDirection: 'row',

@@ -1,5 +1,13 @@
 import React from 'react';
-import {Pressable, ScrollView, StyleSheet, Switch, Text, View} from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import {Card} from '../components/Card';
 import {SectionLabel} from '../components/SectionLabel';
 import {palette} from '../theme/palette';
@@ -9,10 +17,12 @@ type Props = {
   autoSpeak: boolean;
   cameraPosition: CameraPosition;
   confidenceThreshold: number;
+  backendUrl: string;
   modelMode: 'server' | 'device';
   onAutoSpeakChange: (value: boolean) => void;
   onCameraPositionChange: (position: CameraPosition) => void;
   onConfidenceThresholdChange: (value: number) => void;
+  onBackendUrlChange: (value: string) => void;
   onModelModeChange: (mode: 'server' | 'device') => void;
 };
 
@@ -20,10 +30,12 @@ export function SettingsScreen({
   autoSpeak,
   cameraPosition,
   confidenceThreshold,
+  backendUrl,
   modelMode,
   onAutoSpeakChange,
   onCameraPositionChange,
   onConfidenceThresholdChange,
+  onBackendUrlChange,
   onModelModeChange,
 }: Props) {
   return (
@@ -120,6 +132,19 @@ export function SettingsScreen({
             <Text style={styles.stepText}>+</Text>
           </Pressable>
         </View>
+        <Text style={[styles.settingTitle, styles.backendTitle]}>
+          Backend adresi
+        </Text>
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="url"
+          onChangeText={onBackendUrlChange}
+          placeholder="http://192.168.1.4:8000"
+          placeholderTextColor={palette.tertiary}
+          style={styles.input}
+          value={backendUrl}
+        />
       </Card>
     </ScrollView>
   );
@@ -237,6 +262,21 @@ const styles = StyleSheet.create({
     color: palette.text,
     fontSize: 22,
     fontWeight: '800',
+  },
+  backendTitle: {
+    marginTop: 16,
+  },
+  input: {
+    backgroundColor: palette.panel,
+    borderColor: palette.stroke,
+    borderRadius: 10,
+    borderWidth: 1,
+    color: palette.text,
+    fontSize: 14,
+    fontWeight: '700',
+    marginTop: 8,
+    minHeight: 44,
+    paddingHorizontal: 12,
   },
   track: {
     backgroundColor: palette.panel,

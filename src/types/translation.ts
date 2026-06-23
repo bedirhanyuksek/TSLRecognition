@@ -14,3 +14,8 @@ export type HistoryItem = {
   sentence: string;
   time: string;
 };
+
+export type BackendStatus = {
+  state: 'idle' | 'checking' | 'ready' | 'error';
+  message: string;
+};
