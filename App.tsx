@@ -6,7 +6,10 @@ import {AvatarScreen} from './src/screens/AvatarScreen';
 import {HistoryScreen} from './src/screens/HistoryScreen';
 import {LiveScreen} from './src/screens/LiveScreen';
 import {SettingsScreen} from './src/screens/SettingsScreen';
-import {checkBackendHealth} from './src/services/inferenceService';
+import {
+  checkBackendHealth,
+  discoverBackendUrl,
+} from './src/services/inferenceService';
 import {speakTurkish} from './src/services/speechService';
 import {palette} from './src/theme/palette';
 import type {
@@ -40,7 +43,9 @@ function MainApp() {
     useState<CameraPosition>('front');
   const [confidenceThreshold, setConfidenceThreshold] = useState(0.7);
   const [modelMode, setModelMode] = useState<'server' | 'device'>('server');
-  const [backendUrl, setBackendUrl] = useState('http://192.168.1.4:8000');
+  const [backendUrl, setBackendUrl] = useState(
+    'http://Bedirhan-MacBook-Air.local:8000',
+  );
   const [backendStatus, setBackendStatus] = useState<BackendStatus>({
     state: 'idle',
     message: 'Test edilmedi',
@@ -81,6 +86,25 @@ function MainApp() {
         message: error instanceof Error ? error.message : 'Backend hatası',
       });
       setCurrentPrediction(null);
+    }
+  }
+
+  async function autoDiscoverBackend() {
+    setBackendStatus({state: 'checking', message: 'Backend aranıyor'});
+    try {
+      const discoveredUrl = await discoverBackendUrl(backendUrl);
+      setBackendUrl(discoveredUrl);
+      const health = await checkBackendHealth(discoveredUrl);
+      const ready = Object.values(health.models).every(Boolean);
+      setBackendStatus({
+        state: ready ? 'ready' : 'error',
+        message: ready ? `Bulundu: ${discoveredUrl}` : 'Model dosyası eksik',
+      });
+    } catch (error) {
+      setBackendStatus({
+        state: 'error',
+        message: error instanceof Error ? error.message : 'Backend bulunamadı',
+      });
     }
   }
 
@@ -174,11 +198,13 @@ function MainApp() {
             cameraPosition={cameraPosition}
             confidenceThreshold={confidenceThreshold}
             backendUrl={backendUrl}
+            backendStatus={backendStatus}
             modelMode={modelMode}
             onAutoSpeakChange={setAutoSpeak}
             onCameraPositionChange={setCameraPosition}
             onConfidenceThresholdChange={setConfidenceThreshold}
             onBackendUrlChange={setBackendUrl}
+            onBackendDiscover={autoDiscoverBackend}
             onModelModeChange={setModelMode}
           />
         )}

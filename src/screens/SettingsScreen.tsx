@@ -9,20 +9,23 @@ import {
   View,
 } from 'react-native';
 import {Card} from '../components/Card';
+import {PrimaryButton} from '../components/PrimaryButton';
 import {SectionLabel} from '../components/SectionLabel';
 import {palette} from '../theme/palette';
-import type {CameraPosition} from '../types/translation';
+import type {BackendStatus, CameraPosition} from '../types/translation';
 
 type Props = {
   autoSpeak: boolean;
   cameraPosition: CameraPosition;
   confidenceThreshold: number;
   backendUrl: string;
+  backendStatus: BackendStatus;
   modelMode: 'server' | 'device';
   onAutoSpeakChange: (value: boolean) => void;
   onCameraPositionChange: (position: CameraPosition) => void;
   onConfidenceThresholdChange: (value: number) => void;
   onBackendUrlChange: (value: string) => void;
+  onBackendDiscover: () => void;
   onModelModeChange: (mode: 'server' | 'device') => void;
 };
 
@@ -31,11 +34,13 @@ export function SettingsScreen({
   cameraPosition,
   confidenceThreshold,
   backendUrl,
+  backendStatus,
   modelMode,
   onAutoSpeakChange,
   onCameraPositionChange,
   onConfidenceThresholdChange,
   onBackendUrlChange,
+  onBackendDiscover,
   onModelModeChange,
 }: Props) {
   return (
@@ -145,6 +150,17 @@ export function SettingsScreen({
           style={styles.input}
           value={backendUrl}
         />
+        <View style={styles.backendActions}>
+          <PrimaryButton
+            label="Otomatik Bul"
+            onPress={onBackendDiscover}
+            style={styles.backendButton}
+            variant="secondary"
+          />
+          <Text style={[styles.backendStatus, styles[backendStatus.state]]}>
+            {backendStatus.message}
+          </Text>
+        </View>
       </Card>
     </ScrollView>
   );
@@ -277,6 +293,33 @@ const styles = StyleSheet.create({
     marginTop: 8,
     minHeight: 44,
     paddingHorizontal: 12,
+  },
+  backendActions: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 10,
+  },
+  backendButton: {
+    minWidth: 122,
+  },
+  backendStatus: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '800',
+    textAlign: 'right',
+  },
+  idle: {
+    color: palette.tertiary,
+  },
+  checking: {
+    color: palette.secondary,
+  },
+  ready: {
+    color: palette.success,
+  },
+  error: {
+    color: palette.danger,
   },
   track: {
     backgroundColor: palette.panel,
