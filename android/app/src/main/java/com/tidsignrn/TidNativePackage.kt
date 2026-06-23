@@ -7,7 +7,10 @@ import com.facebook.react.uimanager.ViewManager
 
 class TidNativePackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
-    listOf(TidSpeechModule(reactContext))
+    listOf(
+      TidSpeechModule(reactContext),
+      TidNetworkModule(reactContext)
+    )
 
   override fun createViewManagers(
     reactContext: ReactApplicationContext

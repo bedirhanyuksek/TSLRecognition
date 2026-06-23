@@ -1,4 +1,5 @@
 import NetInfo from '@react-native-community/netinfo';
+import {NativeModules} from 'react-native';
 
 export type BackendHealth = {
   ok: boolean;
@@ -27,6 +28,12 @@ export type BackendPrediction = {
 const REQUEST_TIMEOUT_MS = 1200;
 const DISCOVERY_PORT = 8000;
 const LOCAL_HOSTNAME_CANDIDATE = 'http://Bedirhan-MacBook-Air.local:8000';
+
+type TidNetworkModule = {
+  getWifiIpAddress?: () => Promise<string | null>;
+};
+
+const tidNetwork = NativeModules.TidNetwork as TidNetworkModule | undefined;
 
 function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, '');
@@ -92,6 +99,18 @@ async function findReachableUrl(candidates: string[]): Promise<string | null> {
   return null;
 }
 
+async function getDeviceWifiIpAddress(): Promise<string | null> {
+  const netState = await NetInfo.fetch();
+  const netInfoIp =
+    netState.type === 'wifi' && netState.details && 'ipAddress' in netState.details
+      ? netState.details.ipAddress
+      : null;
+  if (netInfoIp) {
+    return netInfoIp;
+  }
+  return tidNetwork?.getWifiIpAddress?.() ?? null;
+}
+
 export async function discoverBackendUrl(
   currentUrl: string,
 ): Promise<string> {
@@ -106,11 +125,7 @@ export async function discoverBackendUrl(
     return directFound;
   }
 
-  const netState = await NetInfo.fetch();
-  const ipAddress =
-    netState.type === 'wifi' && netState.details && 'ipAddress' in netState.details
-      ? netState.details.ipAddress
-      : null;
+  const ipAddress = await getDeviceWifiIpAddress();
 
   if (!ipAddress) {
     throw new Error('Wi-Fi IP adresi alınamadı');
