@@ -5,6 +5,7 @@ Bu dosya, proje başka bir araçta veya başka bir hesapta devam ettirilebilsin 
 ## Mevcut Durum
 
 - Proje klasörü: `/Users/bedirhanyuksek/Documents/TIDSignRN`
+- Avatar Unity proje klasörü: `/Users/bedirhanyuksek/Documents/TIDAvatarUnity`
 - Mobil uygulama: React Native Android prototipi
 - Backend: FastAPI, repo içindeki `server/` klasöründe
 - Model çalıştırma şekli: İlk prototipte model telefonda değil, Mac üzerindeki FastAPI backend'de çalışıyor
@@ -140,7 +141,8 @@ cd /Users/bedirhanyuksek/Documents/TIDSignRN/android
 - [ ] Model bazı kelimeleri, özellikle `ben`, mevcut canlı kamera koşullarında zor algılıyor
 - [ ] Model izole kelime tanıma modelidir; doğal cümle çevirisi sınırlı kural tabanlıdır
 - [ ] Telefon üzerinde on-device model çalıştırma henüz yapılmadı
-- [ ] Unity/avatar entegrasyonu henüz başlamadı
+- [ ] Unity'nin React Native içine entegrasyonu henüz başlamadı
+- [x] Ayrı Unity avatar prototip projesi oluşturuldu
 
 ## Sıradaki Kısa Vadeli İşler
 
@@ -201,15 +203,18 @@ cd /Users/bedirhanyuksek/Documents/TIDSignRN/android
 
 ## Unity / Avatar Aşaması
 
-- [ ] Unity tarafı için yeni, ayrı proje aç
+- [x] Unity tarafı için yeni, ayrı proje aç
   - Mevcut eski Unity projesine dokunma
   - Avatar işi ayrı Unity projesinde yürüsün
+  - Proje: `/Users/bedirhanyuksek/Documents/TIDAvatarUnity`
+  - Commit: `9b25a71 Create TID avatar Unity prototype`
 
-- [ ] Avatar yaklaşımını seç
+- [x] İlk avatar yaklaşımını seç
   - İlk prototip: hazır ücretsiz humanoid avatar + elle hazırlanmış/indirilmiş animasyon klipleri
   - Daha sonra: daha düzgün rig, blend tree veya gesture timeline
+  - Şu an placeholder humanoid avatar ve basit procedural hareketler var
 
-- [ ] İlk avatar kelime setini küçük tut
+- [x] İlk avatar kelime setini küçük tut
   - `ben`
   - `sen`
   - `sevmek`
@@ -217,19 +222,21 @@ cd /Users/bedirhanyuksek/Documents/TIDSignRN/android
   - `doktor`
   - `istemek`
 
-- [ ] Metinden gloss'a basit kural tabanlı dönüşüm kullan
+- [x] Metinden gloss'a basit kural tabanlı dönüşüm kullan
   - Örnek: `ben seni seviyorum` -> `ben sen sevmek`
   - Uygulamadaki `src/utils/translation.ts` ile uyumlu kal
+  - Unity tarafında `GlossAvatarController.cs` içinde ilk kural seti eklendi
+
+- [x] Avatar ekranında ilk demo akışını kur
+  - Kullanıcı metin yazar
+  - Metin gloss dizisine çevrilir
+  - Avatar sırayla gloss animasyonlarını oynatır
+  - Sahne: `/Users/bedirhanyuksek/Documents/TIDAvatarUnity/Assets/TIDAvatar/Scenes/AvatarPrototype.unity`
 
 - [ ] React Native ile Unity entegrasyon stratejisini belirle
   - Seçenek 1: Unity sahnesini ayrı Android Activity olarak açmak
   - Seçenek 2: Unity output'u React Native içine native module olarak gömmek
   - İlk hedef: çalışan prototip, mimari kusursuzluk değil
-
-- [ ] Avatar ekranında ilk demo akışını kur
-  - Kullanıcı metin yazar
-  - Metin gloss dizisine çevrilir
-  - Avatar sırayla gloss animasyonlarını oynatır
 
 ## Daha Sonraki Model Aşaması
 
