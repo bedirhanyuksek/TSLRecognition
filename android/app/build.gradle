@@ -105,11 +105,18 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    packaging {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
 }
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation project(':unityLibrary')
+    implementation files('../unityExport/unityLibrary/libs/unity-classes.jar')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

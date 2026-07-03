@@ -3,4 +3,6 @@ plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'TIDSignRN'
 include ':app'
+include ':unityLibrary'
+project(':unityLibrary').projectDir = new File(rootProject.projectDir, 'unityExport/unityLibrary')
 includeBuild('../node_modules/@react-native/gradle-plugin')

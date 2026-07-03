@@ -11,6 +11,7 @@ import {
   discoverBackendUrl,
   predictFrameFiles,
 } from './src/services/inferenceService';
+import {playUnityGlosses, stopUnityAvatar} from './src/services/avatarService';
 import {speakTurkish} from './src/services/speechService';
 import {palette} from './src/theme/palette';
 import type {
@@ -73,6 +74,9 @@ function MainApp() {
   const [avatarGlosses, setAvatarGlosses] = useState(['ben', 'sen', 'sevmek']);
   const [avatarIndex, setAvatarIndex] = useState(0);
   const [isAvatarPlaying, setIsAvatarPlaying] = useState(false);
+  const [avatarStatus, setAvatarStatus] = useState(
+    'Avatar hazir',
+  );
 
   const naturalSentence = useMemo(
     () => buildSentence(committedWords),
@@ -232,21 +236,28 @@ function MainApp() {
     speakText(naturalSentence || fallback);
   }
 
-  function clearSession() {
-    if (committedWords.length > 0) {
-      setHistory(previous => [
-        {
-          id: Date.now(),
-          words: committedWords,
-          sentence: naturalSentence,
-          time: new Date().toLocaleTimeString('tr-TR', {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        },
-        ...previous,
-      ]);
+  const addHistoryItem = useCallback((words: string[], sentence: string, source: string) => {
+    if (words.length === 0) {
+      return;
     }
+
+    setHistory(previous => [
+      {
+        id: Date.now(),
+        words,
+        sentence,
+        source,
+        time: new Date().toLocaleTimeString('tr-TR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      },
+      ...previous,
+    ]);
+  }, []);
+
+  function clearSession() {
+    addHistoryItem(committedWords, naturalSentence, 'Canlı çeviri');
 
     setCommittedWords([]);
     setCurrentPrediction(null);
@@ -259,8 +270,42 @@ function MainApp() {
 
   function convertAvatarText() {
     const glosses = tokenizeTurkish(avatarText);
-    setAvatarGlosses(glosses.length ? glosses : ['-']);
+    const nextGlosses = glosses.length ? glosses : ['-'];
+    setAvatarGlosses(nextGlosses);
     setAvatarIndex(0);
+    setAvatarStatus(`${glosses.length || 0} gloss hazirlandi`);
+
+    if (glosses.length > 0) {
+      addHistoryItem(glosses, buildSentence(glosses), 'Avatar');
+    }
+  }
+
+  async function toggleAvatarPlayback() {
+    if (isAvatarPlaying) {
+      setIsAvatarPlaying(false);
+      await stopUnityAvatar();
+      setAvatarStatus('Durduruldu');
+      return;
+    }
+
+    setIsAvatarPlaying(true);
+    try {
+      const played = await playUnityGlosses(avatarGlosses);
+      if (!played) {
+        setAvatarStatus('Unity export henuz Android projesine bagli degil');
+      } else {
+        setAvatarStatus('Unity avatar aciliyor');
+      }
+    } catch (error) {
+      console.warn('Unity avatar playback error', error);
+      setAvatarStatus(
+        error instanceof Error ? error.message : 'Unity avatar hatasi',
+      );
+    } finally {
+      setTimeout(() => {
+        setIsAvatarPlaying(false);
+      }, Math.max(avatarGlosses.length, 1) * 1300);
+    }
   }
 
   return (
@@ -297,13 +342,14 @@ function MainApp() {
             activeGloss={activeAvatarGloss}
             activeIndex={avatarIndex}
             isPlaying={isAvatarPlaying}
+            status={avatarStatus}
             onTextChange={setAvatarText}
             onConvert={convertAvatarText}
             onPrevious={() => setAvatarIndex(Math.max(0, avatarIndex - 1))}
             onNext={() =>
               setAvatarIndex(Math.min(avatarGlosses.length - 1, avatarIndex + 1))
             }
-            onPlayToggle={() => setIsAvatarPlaying(!isAvatarPlaying)}
+            onPlayToggle={toggleAvatarPlayback}
           />
         )}
 

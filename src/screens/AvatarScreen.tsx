@@ -13,6 +13,7 @@ type Props = {
   activeGloss: string;
   activeIndex: number;
   isPlaying: boolean;
+  status: string;
   onTextChange: (value: string) => void;
   onConvert: () => void;
   onPrevious: () => void;
@@ -26,6 +27,7 @@ export function AvatarScreen({
   activeGloss,
   activeIndex,
   isPlaying,
+  status,
   onTextChange,
   onConvert,
   onPrevious,
@@ -56,6 +58,7 @@ export function AvatarScreen({
             {Math.min(activeIndex + 1, glosses.length)} / {glosses.length}
           </Text>
         </View>
+        <Text style={styles.statusText}>{status}</Text>
       </Card>
 
       <Card>
@@ -139,6 +142,12 @@ const styles = StyleSheet.create({
     color: palette.secondary,
     fontSize: 13,
     fontWeight: '700',
+  },
+  statusText: {
+    color: palette.secondary,
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 8,
   },
   textInput: {
     backgroundColor: palette.panel,

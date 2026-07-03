@@ -24,6 +24,7 @@ export type HistoryItem = {
   words: string[];
   sentence: string;
   time: string;
+  source?: string;
 };
 
 export type BackendStatus = {

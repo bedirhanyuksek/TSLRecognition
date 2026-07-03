@@ -25,14 +25,14 @@ export function HistoryScreen({history, onClear}: Props) {
         <View style={styles.emptyHistory}>
           <Text style={styles.emptyTitle}>Henüz kayıt yok</Text>
           <Text style={styles.emptyText}>
-            Canlı çeviride temizlenen oturumlar burada listelenecek.
+            Canlı çeviri ve avatar dönüşümleri burada listelenecek.
           </Text>
         </View>
       ) : (
         history.map(item => (
           <Card key={item.id}>
             <View style={styles.historyTop}>
-              <SectionLabel>{item.time}</SectionLabel>
+              <SectionLabel>{item.source ? `${item.source} • ${item.time}` : item.time}</SectionLabel>
               <Text style={styles.smallMuted}>{item.words.length} işaret</Text>
             </View>
             <View style={styles.chipWrap}>

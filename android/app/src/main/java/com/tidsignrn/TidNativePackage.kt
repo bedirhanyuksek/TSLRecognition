@@ -9,10 +9,11 @@ class TidNativePackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
     listOf(
       TidSpeechModule(reactContext),
-      TidNetworkModule(reactContext)
+      TidNetworkModule(reactContext),
+      TidUnityAvatarModule(reactContext)
     )
 
   override fun createViewManagers(
     reactContext: ReactApplicationContext
-  ): List<ViewManager<*, *>> = emptyList()
+  ): List<ViewManager<*, *>> = listOf(TidUnityAvatarViewManager())
 }
