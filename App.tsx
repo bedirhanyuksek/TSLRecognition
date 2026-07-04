@@ -70,8 +70,8 @@ function MainApp() {
     });
   const captureWindowRef = useRef<(() => Promise<string[]>) | null>(null);
   const stabilizerRef = useRef(createStabilizerState());
-  const [avatarText, setAvatarText] = useState('ben seni seviyorum');
-  const [avatarGlosses, setAvatarGlosses] = useState(['ben', 'sen', 'sevmek']);
+  const [avatarText, setAvatarText] = useState('');
+  const [avatarGlosses, setAvatarGlosses] = useState<string[]>([]);
   const [avatarIndex, setAvatarIndex] = useState(0);
   const [isAvatarPlaying, setIsAvatarPlaying] = useState(false);
   const [avatarStatus, setAvatarStatus] = useState(
@@ -82,7 +82,7 @@ function MainApp() {
     () => buildSentence(committedWords),
     [committedWords],
   );
-  const activeAvatarGloss = avatarGlosses[avatarIndex] ?? '-';
+  const activeAvatarGloss = avatarGlosses[avatarIndex] ?? '';
   const liveCameraHeight = Math.min(430, Math.max(372, Math.round(height * 0.48)));
 
   async function testBackend() {
@@ -270,10 +270,11 @@ function MainApp() {
 
   function convertAvatarText() {
     const glosses = tokenizeTurkish(avatarText);
-    const nextGlosses = glosses.length ? glosses : ['-'];
-    setAvatarGlosses(nextGlosses);
+    setAvatarGlosses(glosses);
     setAvatarIndex(0);
-    setAvatarStatus(`${glosses.length || 0} gloss hazirlandi`);
+    setAvatarStatus(
+      glosses.length > 0 ? `${glosses.length} gloss hazirlandi` : 'Metin bekleniyor',
+    );
 
     if (glosses.length > 0) {
       addHistoryItem(glosses, buildSentence(glosses), 'Avatar');
@@ -294,7 +295,7 @@ function MainApp() {
       if (!played) {
         setAvatarStatus('Unity export henuz Android projesine bagli degil');
       } else {
-        setAvatarStatus('Unity avatar aciliyor');
+        setAvatarStatus('Avatar oynatiliyor');
       }
     } catch (error) {
       console.warn('Unity avatar playback error', error);

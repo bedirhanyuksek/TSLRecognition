@@ -34,6 +34,8 @@ export function AvatarScreen({
   onNext,
   onPlayToggle,
 }: Props) {
+  const hasGlosses = glosses.length > 0;
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.headerColumn}>
@@ -55,7 +57,7 @@ export function AvatarScreen({
             <Text style={styles.iconButtonText}>›</Text>
           </Pressable>
           <Text style={styles.progressText}>
-            {Math.min(activeIndex + 1, glosses.length)} / {glosses.length}
+            {hasGlosses ? `${Math.min(activeIndex + 1, glosses.length)} / ${glosses.length}` : '-'}
           </Text>
         </View>
         <Text style={styles.statusText}>{status}</Text>
@@ -76,14 +78,18 @@ export function AvatarScreen({
 
       <Card>
         <SectionLabel>Gloss Önizleme</SectionLabel>
-        <View style={styles.glossLine}>
-          {glosses.map((gloss, index) => (
-            <React.Fragment key={`${gloss}-${index}`}>
-              <GlossChip active={index === activeIndex}>{gloss}</GlossChip>
-              {index < glosses.length - 1 && <Text style={styles.arrow}>›</Text>}
-            </React.Fragment>
-          ))}
-        </View>
+        {hasGlosses ? (
+          <View style={styles.glossLine}>
+            {glosses.map((gloss, index) => (
+              <React.Fragment key={`${gloss}-${index}`}>
+                <GlossChip active={index === activeIndex}>{gloss}</GlossChip>
+                {index < glosses.length - 1 && <Text style={styles.arrow}>›</Text>}
+              </React.Fragment>
+            ))}
+          </View>
+        ) : (
+          <Text style={styles.emptyPreview}>Henüz gloss oluşturulmadı.</Text>
+        )}
         <Text style={styles.noteText}>
           Desteklenmeyen kelimeler avatar kuyruğunda uyarı olarak gösterilecek.
         </Text>
@@ -169,6 +175,11 @@ const styles = StyleSheet.create({
     color: palette.tertiary,
     fontSize: 18,
     fontWeight: '800',
+  },
+  emptyPreview: {
+    color: palette.tertiary,
+    fontSize: 14,
+    fontWeight: '700',
   },
   noteText: {
     color: palette.secondary,

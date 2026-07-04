@@ -11,10 +11,12 @@ export function AvatarStage({activeGloss}: Props) {
   return (
     <View style={styles.avatarStage}>
       <UnityAvatarView style={StyleSheet.absoluteFill} />
-      <View pointerEvents="none" style={styles.avatarOverlay}>
-        <Text style={styles.avatarOverlayMuted}>Şu an</Text>
-        <Text style={styles.avatarOverlayText}>{activeGloss}</Text>
-      </View>
+      {activeGloss ? (
+        <View pointerEvents="none" style={styles.avatarOverlay}>
+          <Text style={styles.avatarOverlayMuted}>Şu an</Text>
+          <Text style={styles.avatarOverlayText}>{activeGloss}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
