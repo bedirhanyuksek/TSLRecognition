@@ -1,5 +1,5 @@
 import NetInfo from '@react-native-community/netinfo';
-import {NativeModules} from 'react-native';
+import { NativeModules } from 'react-native';
 
 export type BackendHealth = {
   ok: boolean;
@@ -28,6 +28,7 @@ export type BackendPrediction = {
 const REQUEST_TIMEOUT_MS = 1200;
 const DISCOVERY_PORT = 8000;
 const LOCAL_HOSTNAME_CANDIDATE = 'http://Bedirhan-MacBook-Air.local:8000';
+const HOTSPOT_BACKEND_CANDIDATE = 'http://10.177.14.24:8000';
 
 type TidNetworkModule = {
   getWifiIpAddress?: () => Promise<string | null>;
@@ -43,14 +44,18 @@ async function fetchWithTimeout(url: string, timeoutMs = REQUEST_TIMEOUT_MS) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, {signal: controller.signal});
+    return await fetch(url, { signal: controller.signal });
   } finally {
     clearTimeout(timeout);
   }
 }
 
-export async function checkBackendHealth(baseUrl: string): Promise<BackendHealth> {
-  const response = await fetchWithTimeout(`${normalizeBaseUrl(baseUrl)}/health`);
+export async function checkBackendHealth(
+  baseUrl: string,
+): Promise<BackendHealth> {
+  const response = await fetchWithTimeout(
+    `${normalizeBaseUrl(baseUrl)}/health`,
+  );
   if (!response.ok) {
     throw new Error(`Backend health failed: ${response.status}`);
   }
@@ -69,6 +74,31 @@ async function tryBackendUrl(baseUrl: string): Promise<string | null> {
   return null;
 }
 
+function hostsForPrefix(prefix: string, ownHost?: number): string[] {
+  const likelyHosts = [1, 2, 3, 4, 5, 10, 20, 50, 100, 101, 102, 150, 200, 254];
+  const hosts = Array.from(
+    new Set([
+      ...likelyHosts,
+      ...Array.from({ length: 254 }, (_, index) => index + 1),
+    ]),
+  ).filter(host => host !== ownHost);
+  return hosts.map(host => `http://${prefix}.${host}:${DISCOVERY_PORT}`);
+}
+
+function fallbackSubnetCandidates(): string[] {
+  return [
+    '192.168.1',
+    '192.168.0',
+    '192.168.43',
+    '192.168.49',
+    '192.168.137',
+    '172.20.10',
+    '10.0.0',
+    '10.227.122',
+    '10.177.14',
+  ].flatMap(prefix => hostsForPrefix(prefix));
+}
+
 function subnetCandidates(ipAddress: string): string[] {
   const parts = ipAddress.split('.');
   if (parts.length !== 4) {
@@ -76,14 +106,7 @@ function subnetCandidates(ipAddress: string): string[] {
   }
   const prefix = parts.slice(0, 3).join('.');
   const ownHost = Number(parts[3]);
-  const likelyHosts = [1, 2, 3, 4, 5, 10, 20, 50, 100, 101, 102, 150, 200, 254];
-  const hosts = Array.from(
-    new Set([
-      ...likelyHosts,
-      ...Array.from({length: 254}, (_, index) => index + 1),
-    ]),
-  ).filter(host => host !== ownHost);
-  return hosts.map(host => `http://${prefix}.${host}:${DISCOVERY_PORT}`);
+  return hostsForPrefix(prefix, ownHost);
 }
 
 async function findReachableUrl(candidates: string[]): Promise<string | null> {
@@ -102,7 +125,9 @@ async function findReachableUrl(candidates: string[]): Promise<string | null> {
 async function getDeviceWifiIpAddress(): Promise<string | null> {
   const netState = await NetInfo.fetch();
   const netInfoIp =
-    netState.type === 'wifi' && netState.details && 'ipAddress' in netState.details
+    netState.type === 'wifi' &&
+    netState.details &&
+    'ipAddress' in netState.details
       ? netState.details.ipAddress
       : null;
   if (netInfoIp) {
@@ -111,11 +136,10 @@ async function getDeviceWifiIpAddress(): Promise<string | null> {
   return tidNetwork?.getWifiIpAddress?.() ?? null;
 }
 
-export async function discoverBackendUrl(
-  currentUrl: string,
-): Promise<string> {
+export async function discoverBackendUrl(currentUrl: string): Promise<string> {
   const directCandidates = [
     currentUrl,
+    HOTSPOT_BACKEND_CANDIDATE,
     LOCAL_HOSTNAME_CANDIDATE,
     'http://10.0.2.2:8000',
   ].filter(Boolean);
@@ -126,14 +150,17 @@ export async function discoverBackendUrl(
   }
 
   const ipAddress = await getDeviceWifiIpAddress();
+  const networkCandidates = ipAddress
+    ? subnetCandidates(ipAddress)
+    : fallbackSubnetCandidates();
 
-  if (!ipAddress) {
-    throw new Error('Wi-Fi IP adresi alınamadı');
-  }
-
-  const subnetFound = await findReachableUrl(subnetCandidates(ipAddress));
+  const subnetFound = await findReachableUrl(networkCandidates);
   if (subnetFound) {
     return subnetFound;
+  }
+
+  if (!ipAddress) {
+    throw new Error('Wi-Fi IP alınamadı; yaygın ağlarda backend bulunamadı');
   }
 
   throw new Error(`${ipAddress} ağı içinde backend bulunamadı`);

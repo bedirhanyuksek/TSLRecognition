@@ -1,11 +1,19 @@
-import React from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
-import {AvatarStage} from '../components/AvatarStage';
-import {Card} from '../components/Card';
-import {GlossChip} from '../components/GlossChip';
-import {PrimaryButton} from '../components/PrimaryButton';
-import {SectionLabel} from '../components/SectionLabel';
-import {palette} from '../theme/palette';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Keyboard,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { AvatarStage } from '../components/AvatarStage';
+import { Card } from '../components/Card';
+import { GlossChip } from '../components/GlossChip';
+import { PrimaryButton } from '../components/PrimaryButton';
+import { SectionLabel } from '../components/SectionLabel';
+import { palette } from '../theme/palette';
 
 type Props = {
   text: string;
@@ -35,9 +43,45 @@ export function AvatarScreen({
   onPlayToggle,
 }: Props) {
   const hasGlosses = glosses.length > 0;
+  const scrollRef = useRef<ScrollView>(null);
+  const inputRef = useRef<TextInput>(null);
+  const [inputY, setInputY] = useState(0);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  function scrollToInput() {
+    scrollRef.current?.scrollTo({
+      y: Math.max(0, inputY - 24),
+      animated: true,
+    });
+  }
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+      requestAnimationFrame(scrollToInput);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+      inputRef.current?.blur();
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, [inputY]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      ref={scrollRef}
+      keyboardDismissMode="on-drag"
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={[
+        styles.scrollContent,
+        keyboardVisible && styles.scrollContentKeyboard,
+      ]}
+    >
       <View style={styles.headerColumn}>
         <Text style={styles.title}>Avatar</Text>
         <Text style={styles.subtitle}>Yazıyı işaret animasyonuna dönüştür</Text>
@@ -51,30 +95,48 @@ export function AvatarScreen({
             <Text style={styles.iconButtonText}>‹</Text>
           </Pressable>
           <Pressable style={styles.playButton} onPress={onPlayToggle}>
-            <Text style={styles.playButtonText}>{isPlaying ? 'Duraklat' : 'Oynat'}</Text>
+            <Text style={styles.playButtonText}>
+              {isPlaying ? 'Duraklat' : 'Oynat'}
+            </Text>
           </Pressable>
           <Pressable style={styles.iconButton} onPress={onNext}>
             <Text style={styles.iconButtonText}>›</Text>
           </Pressable>
           <Text style={styles.progressText}>
-            {hasGlosses ? `${Math.min(activeIndex + 1, glosses.length)} / ${glosses.length}` : '-'}
+            {hasGlosses
+              ? `${Math.min(activeIndex + 1, glosses.length)} / ${
+                  glosses.length
+                }`
+              : '-'}
           </Text>
         </View>
         <Text style={styles.statusText}>{status}</Text>
       </Card>
 
-      <Card>
-        <SectionLabel>Metin</SectionLabel>
-        <TextInput
-          value={text}
-          onChangeText={onTextChange}
-          placeholder="Örn: ben seni seviyorum"
-          placeholderTextColor={palette.tertiary}
-          multiline
-          style={styles.textInput}
-        />
-        <PrimaryButton label="İşarete Çevir" onPress={onConvert} />
-      </Card>
+      <View onLayout={event => setInputY(event.nativeEvent.layout.y)}>
+        <Card>
+          <SectionLabel>Metin</SectionLabel>
+          <TextInput
+            ref={inputRef}
+            value={text}
+            onChangeText={onTextChange}
+            placeholder="Örn: ben seni seviyorum"
+            placeholderTextColor={palette.tertiary}
+            multiline
+            blurOnSubmit
+            returnKeyType="done"
+            style={styles.textInput}
+            onFocus={() => {
+              setTimeout(scrollToInput, 80);
+            }}
+            onSubmitEditing={() => {
+              inputRef.current?.blur();
+              Keyboard.dismiss();
+            }}
+          />
+          <PrimaryButton label="İşarete Çevir" onPress={onConvert} />
+        </Card>
+      </View>
 
       <Card>
         <SectionLabel>Gloss Önizleme</SectionLabel>
@@ -83,7 +145,9 @@ export function AvatarScreen({
             {glosses.map((gloss, index) => (
               <React.Fragment key={`${gloss}-${index}`}>
                 <GlossChip active={index === activeIndex}>{gloss}</GlossChip>
-                {index < glosses.length - 1 && <Text style={styles.arrow}>›</Text>}
+                {index < glosses.length - 1 && (
+                  <Text style={styles.arrow}>›</Text>
+                )}
               </React.Fragment>
             ))}
           </View>
@@ -99,6 +163,12 @@ export function AvatarScreen({
 }
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    paddingBottom: 8,
+  },
+  scrollContentKeyboard: {
+    paddingBottom: 120,
+  },
   headerColumn: {
     marginBottom: 8,
   },

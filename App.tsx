@@ -1,19 +1,38 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {StatusBar, StyleSheet, useWindowDimensions, View} from 'react-native';
-import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {TabBar} from './src/components/TabBar';
-import {AvatarScreen} from './src/screens/AvatarScreen';
-import {HistoryScreen} from './src/screens/HistoryScreen';
-import {LiveScreen} from './src/screens/LiveScreen';
-import {SettingsScreen} from './src/screens/SettingsScreen';
+import NetInfo from '@react-native-community/netinfo';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  AppState,
+  StatusBar,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import { TabBar } from './src/components/TabBar';
+import { AvatarScreen } from './src/screens/AvatarScreen';
+import { HistoryScreen } from './src/screens/HistoryScreen';
+import { LiveScreen } from './src/screens/LiveScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
 import {
   checkBackendHealth,
   discoverBackendUrl,
   predictFrameFiles,
 } from './src/services/inferenceService';
-import {playUnityGlosses, stopUnityAvatar} from './src/services/avatarService';
-import {speakTurkish} from './src/services/speechService';
-import {palette} from './src/theme/palette';
+import {
+  playUnityGlosses,
+  stopUnityAvatar,
+} from './src/services/avatarService';
+import { speakTurkish } from './src/services/speechService';
+import { palette } from './src/theme/palette';
 import type {
   BackendStatus,
   CameraPosition,
@@ -43,7 +62,7 @@ function App() {
 
 function MainApp() {
   const insets = useSafeAreaInsets();
-  const {height} = useWindowDimensions();
+  const { height } = useWindowDimensions();
   const [tab, setTab] = useState<TabKey>('live');
   const [currentPrediction, setCurrentPrediction] = useState<Prediction | null>(
     null,
@@ -51,13 +70,10 @@ function MainApp() {
   const [committedWords, setCommittedWords] = useState<string[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [autoSpeak, setAutoSpeak] = useState(true);
-  const [cameraPosition, setCameraPosition] =
-    useState<CameraPosition>('front');
-  const [confidenceThreshold, setConfidenceThreshold] = useState(0.7);
+  const [cameraPosition, setCameraPosition] = useState<CameraPosition>('front');
+  const [confidenceThreshold, setConfidenceThreshold] = useState(0.8);
   const [modelMode, setModelMode] = useState<'server' | 'device'>('server');
-  const [backendUrl, setBackendUrl] = useState(
-    'http://Bedirhan-MacBook-Air.local:8000',
-  );
+  const [backendUrl, setBackendUrl] = useState('http://10.177.14.24:8000');
   const [backendStatus, setBackendStatus] = useState<BackendStatus>({
     state: 'idle',
     message: 'Test edilmedi',
@@ -70,23 +86,31 @@ function MainApp() {
     });
   const captureWindowRef = useRef<(() => Promise<string[]>) | null>(null);
   const stabilizerRef = useRef(createStabilizerState());
+  const backendUrlRef = useRef(backendUrl);
+  const backendDiscoveryInFlightRef = useRef(false);
+  const lastLiveHistorySentenceRef = useRef<string | null>(null);
   const [avatarText, setAvatarText] = useState('');
   const [avatarGlosses, setAvatarGlosses] = useState<string[]>([]);
   const [avatarIndex, setAvatarIndex] = useState(0);
   const [isAvatarPlaying, setIsAvatarPlaying] = useState(false);
-  const [avatarStatus, setAvatarStatus] = useState(
-    'Avatar hazir',
-  );
+  const [avatarStatus, setAvatarStatus] = useState('Avatar hazir');
 
   const naturalSentence = useMemo(
     () => buildSentence(committedWords),
     [committedWords],
   );
   const activeAvatarGloss = avatarGlosses[avatarIndex] ?? '';
-  const liveCameraHeight = Math.min(430, Math.max(372, Math.round(height * 0.48)));
+  const liveCameraHeight = Math.min(
+    430,
+    Math.max(372, Math.round(height * 0.48)),
+  );
+
+  useEffect(() => {
+    backendUrlRef.current = backendUrl;
+  }, [backendUrl]);
 
   async function testBackend() {
-    setBackendStatus({state: 'checking', message: 'Kontrol ediliyor'});
+    setBackendStatus({ state: 'checking', message: 'Kontrol ediliyor' });
     try {
       const health = await checkBackendHealth(backendUrl);
       const ready = Object.values(health.models).every(Boolean);
@@ -118,16 +142,26 @@ function MainApp() {
     });
   }, []);
 
-  const commitAcceptedPrediction = useCallback((next: Prediction) => {
-    setCommittedWords(previous => {
-      const nextWords = [...previous, next.gloss];
-      const meaningfulSentence = buildMeaningfulSentence(nextWords);
-      if (autoSpeak && meaningfulSentence) {
-        speakText(meaningfulSentence);
-      }
-      return nextWords;
-    });
-  }, [autoSpeak, speakText]);
+  const commitAcceptedPrediction = useCallback(
+    (next: Prediction) => {
+      setCommittedWords(previous => {
+        const nextWords = [...previous, next.gloss];
+        const meaningfulSentence = buildMeaningfulSentence(nextWords);
+
+        if (
+          meaningfulSentence &&
+          autoSpeak &&
+          lastLiveHistorySentenceRef.current !== meaningfulSentence
+        ) {
+          lastLiveHistorySentenceRef.current = meaningfulSentence;
+          speakText(meaningfulSentence);
+        }
+
+        return nextWords;
+      });
+    },
+    [autoSpeak, speakText],
+  );
 
   const runLiveInferenceTick = useCallback(async () => {
     const captureWindow = captureWindowRef.current;
@@ -161,6 +195,7 @@ function MainApp() {
           prediction,
           confidenceThreshold,
         );
+
         if (stabilization.accepted) {
           commitAcceptedPrediction(stabilization.prediction);
         }
@@ -191,11 +226,18 @@ function MainApp() {
   }, [backendUrl, commitAcceptedPrediction, confidenceThreshold]);
 
   function toggleLiveInference() {
-    setLiveInferenceStatus(previous => ({
-      running: !previous.running,
+    const willRun = !liveInferenceStatus.running;
+    if (willRun) {
+      lastLiveHistorySentenceRef.current = null;
+    } else {
+      addHistoryItem(committedWords, naturalSentence, 'Canlı çeviri');
+    }
+
+    setLiveInferenceStatus({
+      running: willRun,
       busy: false,
-      message: !previous.running ? 'Başlatıldı' : 'Durduruldu',
-    }));
+      message: willRun ? 'Başlatıldı' : 'Durduruldu',
+    });
   }
 
   useEffect(() => {
@@ -212,49 +254,121 @@ function MainApp() {
     runLiveInferenceTick,
   ]);
 
-  async function autoDiscoverBackend() {
-    setBackendStatus({state: 'checking', message: 'Backend aranıyor'});
-    try {
-      const discoveredUrl = await discoverBackendUrl(backendUrl);
-      setBackendUrl(discoveredUrl);
-      const health = await checkBackendHealth(discoveredUrl);
-      const ready = Object.values(health.models).every(Boolean);
-      setBackendStatus({
-        state: ready ? 'ready' : 'error',
-        message: ready ? `Bulundu: ${discoveredUrl}` : 'Model dosyası eksik',
-      });
-    } catch (error) {
-      setBackendStatus({
-        state: 'error',
-        message: error instanceof Error ? error.message : 'Backend bulunamadı',
-      });
-    }
-  }
+  const autoDiscoverBackend = useCallback(
+    async (reason: 'manual' | 'network' | 'resume' | 'startup' = 'manual') => {
+      if (backendDiscoveryInFlightRef.current) {
+        return;
+      }
+
+      backendDiscoveryInFlightRef.current = true;
+      const messageByReason = {
+        manual: 'Backend aranıyor',
+        network: 'Wi-Fi değişti, backend aranıyor',
+        resume: 'Uygulama açıldı, backend kontrol ediliyor',
+        startup: 'Backend otomatik aranıyor',
+      };
+
+      setBackendStatus({ state: 'checking', message: messageByReason[reason] });
+      try {
+        const discoveredUrl = await discoverBackendUrl(backendUrlRef.current);
+        backendUrlRef.current = discoveredUrl;
+        setBackendUrl(discoveredUrl);
+        const health = await checkBackendHealth(discoveredUrl);
+        const ready = Object.values(health.models).every(Boolean);
+        setBackendStatus({
+          state: ready ? 'ready' : 'error',
+          message: ready ? `Bulundu: ${discoveredUrl}` : 'Model dosyası eksik',
+        });
+      } catch (error) {
+        setBackendStatus({
+          state: 'error',
+          message:
+            error instanceof Error ? error.message : 'Backend bulunamadı',
+        });
+      } finally {
+        backendDiscoveryInFlightRef.current = false;
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const initialTimer = setTimeout(() => {
+      autoDiscoverBackend('startup');
+    }, 700);
+
+    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+      if (state.type === 'wifi' && state.isConnected !== false) {
+        autoDiscoverBackend('network');
+      }
+    });
+
+    const appStateSubscription = AppState.addEventListener('change', state => {
+      if (state === 'active') {
+        autoDiscoverBackend('resume');
+      }
+    });
+
+    return () => {
+      clearTimeout(initialTimer);
+      unsubscribeNetInfo();
+      appStateSubscription.remove();
+    };
+  }, [autoDiscoverBackend]);
 
   function speakCurrentOutput() {
     const fallback = currentPrediction?.display ?? '';
     speakText(naturalSentence || fallback);
   }
 
-  const addHistoryItem = useCallback((words: string[], sentence: string, source: string) => {
-    if (words.length === 0) {
+  const addHistoryItem = useCallback(
+    (words: string[], sentence: string, source: string) => {
+      if (words.length === 0) {
+        return;
+      }
+
+      setHistory(previous => {
+        const latest = previous[0];
+        if (latest?.sentence === sentence && latest?.source === source) {
+          return previous;
+        }
+
+        return [
+          {
+            id: Date.now(),
+            words,
+            sentence,
+            source,
+            time: new Date().toLocaleTimeString('tr-TR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          },
+          ...previous,
+        ];
+      });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (tab === 'live' || !liveInferenceStatus.running) {
       return;
     }
 
-    setHistory(previous => [
-      {
-        id: Date.now(),
-        words,
-        sentence,
-        source,
-        time: new Date().toLocaleTimeString('tr-TR', {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-      },
-      ...previous,
-    ]);
-  }, []);
+    addHistoryItem(committedWords, naturalSentence, 'Canlı çeviri');
+    setLiveInferenceStatus({
+      running: false,
+      busy: false,
+      message: 'Sekme değişti, canlı durduruldu',
+    });
+  }, [
+    addHistoryItem,
+    committedWords,
+    liveInferenceStatus.running,
+    naturalSentence,
+    tab,
+  ]);
 
   function clearSession() {
     addHistoryItem(committedWords, naturalSentence, 'Canlı çeviri');
@@ -262,6 +376,7 @@ function MainApp() {
     setCommittedWords([]);
     setCurrentPrediction(null);
     stabilizerRef.current = createStabilizerState();
+    lastLiveHistorySentenceRef.current = null;
   }
 
   function removeLastWord() {
@@ -273,7 +388,9 @@ function MainApp() {
     setAvatarGlosses(glosses);
     setAvatarIndex(0);
     setAvatarStatus(
-      glosses.length > 0 ? `${glosses.length} gloss hazirlandi` : 'Metin bekleniyor',
+      glosses.length > 0
+        ? `${glosses.length} gloss hazirlandi`
+        : 'Metin bekleniyor',
     );
 
     if (glosses.length > 0) {
@@ -310,7 +427,7 @@ function MainApp() {
   }
 
   return (
-    <View style={[styles.root, {paddingTop: Math.max(insets.top, 10)}]}>
+    <View style={[styles.root, { paddingTop: Math.max(insets.top, 10) }]}>
       <StatusBar barStyle="dark-content" backgroundColor={palette.background} />
       <View style={styles.appShell}>
         {tab === 'live' && (
@@ -348,7 +465,9 @@ function MainApp() {
             onConvert={convertAvatarText}
             onPrevious={() => setAvatarIndex(Math.max(0, avatarIndex - 1))}
             onNext={() =>
-              setAvatarIndex(Math.min(avatarGlosses.length - 1, avatarIndex + 1))
+              setAvatarIndex(
+                Math.min(avatarGlosses.length - 1, avatarIndex + 1),
+              )
             }
             onPlayToggle={toggleAvatarPlayback}
           />

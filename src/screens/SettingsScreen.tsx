@@ -8,11 +8,11 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {Card} from '../components/Card';
-import {PrimaryButton} from '../components/PrimaryButton';
-import {SectionLabel} from '../components/SectionLabel';
-import {palette} from '../theme/palette';
-import type {BackendStatus, CameraPosition} from '../types/translation';
+import { Card } from '../components/Card';
+import { PrimaryButton } from '../components/PrimaryButton';
+import { SectionLabel } from '../components/SectionLabel';
+import { palette } from '../theme/palette';
+import type { BackendStatus, CameraPosition } from '../types/translation';
 
 type Props = {
   autoSpeak: boolean;
@@ -46,7 +46,8 @@ export function SettingsScreen({
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.scrollContent}>
+      contentContainerStyle={styles.scrollContent}
+    >
       <View style={styles.headerRow}>
         <Text style={styles.title}>Ayarlar</Text>
         <Text style={styles.caption}>Prototip kontrol merkezi</Text>
@@ -56,7 +57,9 @@ export function SettingsScreen({
         <SectionLabel>Ses</SectionLabel>
         <View style={styles.settingRow}>
           <View style={styles.settingCopy}>
-            <Text style={styles.settingTitle}>Anlamlı cümleyi otomatik oku</Text>
+            <Text style={styles.settingTitle}>
+              Anlamlı cümleyi otomatik oku
+            </Text>
             <Text style={styles.settingText}>
               Kelimeler doğal cümleye dönüşünce seslendirme yapılır.
             </Text>
@@ -65,7 +68,7 @@ export function SettingsScreen({
             value={autoSpeak}
             onValueChange={onAutoSpeakChange}
             thumbColor="#FFFFFF"
-            trackColor={{false: palette.stroke, true: palette.accent}}
+            trackColor={{ false: palette.stroke, true: palette.accent }}
           />
         </View>
       </Card>
@@ -113,17 +116,18 @@ export function SettingsScreen({
           <Pressable
             onPress={() =>
               onConfidenceThresholdChange(
-                Math.max(0.4, confidenceThreshold - 0.05),
+                Math.max(0.7, confidenceThreshold - 0.05),
               )
             }
-            style={styles.stepButton}>
+            style={styles.stepButton}
+          >
             <Text style={styles.stepText}>-</Text>
           </Pressable>
           <View style={styles.track}>
             <View
               style={[
                 styles.trackFill,
-                {width: `${Math.round(confidenceThreshold * 100)}%`},
+                { width: `${Math.round(confidenceThreshold * 100)}%` },
               ]}
             />
           </View>
@@ -133,7 +137,8 @@ export function SettingsScreen({
                 Math.min(0.95, confidenceThreshold + 0.05),
               )
             }
-            style={styles.stepButton}>
+            style={styles.stepButton}
+          >
             <Text style={styles.stepText}>+</Text>
           </Pressable>
         </View>
@@ -145,7 +150,7 @@ export function SettingsScreen({
           autoCorrect={false}
           keyboardType="url"
           onChangeText={onBackendUrlChange}
-          placeholder="http://192.168.1.4:8000"
+          placeholder="http://10.177.14.24:8000"
           placeholderTextColor={palette.tertiary}
           style={styles.input}
           value={backendUrl}
@@ -178,7 +183,8 @@ function SegmentButton({
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.segmentButton, active && styles.segmentButtonActive]}>
+      style={[styles.segmentButton, active && styles.segmentButtonActive]}
+    >
       <Text style={[styles.segmentText, active && styles.segmentTextActive]}>
         {label}
       </Text>

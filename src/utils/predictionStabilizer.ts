@@ -1,5 +1,5 @@
-import type {BackendPrediction} from '../services/inferenceService';
-import type {Prediction, PredictionCandidate} from '../types/translation';
+import type { BackendPrediction } from '../services/inferenceService';
+import type { Prediction, PredictionCandidate } from '../types/translation';
 
 export type StabilizerState = {
   recent: PredictionCandidate[];
@@ -19,8 +19,9 @@ export type StabilizerResult =
     };
 
 const WINDOW_SIZE = 5;
-const REQUIRED_REPEATS = 3;
+const REQUIRED_REPEATS = 2;
 const MIN_TOP_MARGIN = 0.12;
+const MIN_ACCEPTED_CONFIDENCE = 0.75;
 export function createStabilizerState(): StabilizerState {
   return {
     recent: [],
@@ -47,7 +48,7 @@ export function evaluatePredictionCandidate(
     !backendPrediction.display
   ) {
     resetStabilizerState(state);
-    return {accepted: false, reason: backendPrediction.error || 'İşaret yok'};
+    return { accepted: false, reason: backendPrediction.error || 'İşaret yok' };
   }
 
   const candidate: PredictionCandidate = {
@@ -59,7 +60,12 @@ export function evaluatePredictionCandidate(
 
   state.recent = [...state.recent, candidate].slice(-WINDOW_SIZE);
 
-  if (candidate.confidence < confidenceThreshold) {
+  const effectiveThreshold = Math.max(
+    confidenceThreshold,
+    MIN_ACCEPTED_CONFIDENCE,
+  );
+
+  if (candidate.confidence < effectiveThreshold) {
     return {
       accepted: false,
       reason: `Güven düşük: ${Math.round(candidate.confidence * 100)}%`,
@@ -85,7 +91,7 @@ export function evaluatePredictionCandidate(
   }
 
   if (state.lastAcceptedGloss === candidate.gloss) {
-    return {accepted: false, reason: 'Aynı kelime bekletiliyor'};
+    return { accepted: false, reason: 'Aynı kelime bekletiliyor' };
   }
 
   state.lastAcceptedGloss = candidate.gloss;

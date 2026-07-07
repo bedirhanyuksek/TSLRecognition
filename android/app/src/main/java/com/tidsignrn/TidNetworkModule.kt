@@ -24,10 +24,6 @@ class TidNetworkModule(
       val activeNetwork = connectivityManager.activeNetwork
       val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
       val isWifi = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
-      if (!isWifi) {
-        promise.resolve(null)
-        return
-      }
 
       val wifiIp = getWifiManagerIpAddress()
       if (wifiIp != null) {
@@ -35,7 +31,13 @@ class TidNetworkModule(
         return
       }
 
-      promise.resolve(getNetworkInterfaceIpAddress())
+      val interfaceIp = getNetworkInterfaceIpAddress()
+      if (interfaceIp != null || isWifi) {
+        promise.resolve(interfaceIp)
+        return
+      }
+
+      promise.resolve(null)
     } catch (error: Exception) {
       promise.reject("TID_NETWORK_IP_ERROR", error.message, error)
     }
