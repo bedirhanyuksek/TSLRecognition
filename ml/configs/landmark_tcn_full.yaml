@@ -1,0 +1,25 @@
+seed: 42
+num_classes: 226
+
+data:
+  train_manifest: data/train-data-with-labels/train_labels.csv
+  train_landmarks: data/landmarks/train_full
+  val_manifest: data/extracted/validation-labels/ground_truth.csv
+  val_landmarks: data/landmarks/val_full
+
+model:
+  hidden_size: 384
+  dropout: 0.4
+
+training:
+  epochs: 50
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0003
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  lr_factor: 0.5
+  lr_patience: 3
+  min_learning_rate: 0.000001
+  early_stopping_patience: 10
+  output_dir: outputs/landmark_tcn_full

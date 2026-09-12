@@ -150,7 +150,7 @@ export function SettingsScreen({
           autoCorrect={false}
           keyboardType="url"
           onChangeText={onBackendUrlChange}
-          placeholder="http://10.177.14.24:8000"
+          placeholder="http://localhost:8000"
           placeholderTextColor={palette.tertiary}
           style={styles.input}
           value={backendUrl}

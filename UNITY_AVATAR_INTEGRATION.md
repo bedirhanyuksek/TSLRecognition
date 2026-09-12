@@ -34,7 +34,7 @@ UnityPlayer.UnitySendMessage("UnityAppBridge", "PlayGlossCsv", "ben,sen,sevmek")
 1. Unity projesini aç:
 
 ```text
-/Users/bedirhanyuksek/Documents/TIDAvatarUnity
+<unity-project>
 ```
 
 2. Üst menüden tekrar çalıştır:
@@ -62,14 +62,23 @@ Scenes In Build: Assets/TIDAvatar/Scenes/AvatarPrototype.unity
 6. Export hedef klasörü:
 
 ```text
-/Users/bedirhanyuksek/Documents/TIDSignRN/android/unityExport
+<repo-root>/android/unityExport
 ```
 
 Export sonrası beklenen klasör:
 
 ```text
-/Users/bedirhanyuksek/Documents/TIDSignRN/android/unityExport/unityLibrary
+<repo-root>/android/unityExport/unityLibrary
 ```
+
+Local Android ve Unity yolları tracked Gradle dosyalarında tutulmaz. Örnek dosyayı
+kopyalayıp kendi makinenizdeki yolları tanımlayın:
+
+```bash
+cp android/local.properties.example android/local.properties
+```
+
+`android/local.properties` Git tarafından ignore edilir.
 
 ## React Native Android Tarafında Sonraki Adım
 

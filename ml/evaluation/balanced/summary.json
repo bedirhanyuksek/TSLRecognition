@@ -1,0 +1,410 @@
+{
+  "checkpoint_epoch": 38,
+  "samples": 1130,
+  "top1_accuracy": 0.6176991150442478,
+  "top5_accuracy": 0.8646017699115044,
+  "perfect_classes": 29,
+  "zero_accuracy_classes": 10,
+  "worst_classes": [
+    {
+      "class_id": 16,
+      "tr": "ataturk",
+      "en": "ataturk",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.8,
+      "most_confused_class_id": 51,
+      "most_confused_tr": "devlet",
+      "most_confused_en": "government",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 45,
+      "tr": "cumartesi",
+      "en": "saturday",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.6,
+      "most_confused_class_id": 121,
+      "most_confused_tr": "kopru",
+      "most_confused_en": "bridge",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 122,
+      "tr": "kotu",
+      "en": "bad",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.0,
+      "most_confused_class_id": 212,
+      "most_confused_tr": "yarin",
+      "most_confused_en": "tomorrow",
+      "confusion_count": 1
+    },
+    {
+      "class_id": 126,
+      "tr": "makas",
+      "en": "scissors",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.2,
+      "most_confused_class_id": 132,
+      "most_confused_tr": "merdiven",
+      "most_confused_en": "stairs",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 134,
+      "tr": "mudur",
+      "en": "manager",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.8,
+      "most_confused_class_id": 95,
+      "most_confused_tr": "igne",
+      "most_confused_en": "needle",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 164,
+      "tr": "rica_etmek",
+      "en": "request",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.6,
+      "most_confused_class_id": 3,
+      "most_confused_tr": "afiyet_olsun",
+      "most_confused_en": "enjoy_your_meal",
+      "confusion_count": 3
+    },
+    {
+      "class_id": 175,
+      "tr": "sen",
+      "en": "you",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.0,
+      "most_confused_class_id": 103,
+      "most_confused_tr": "kalem",
+      "most_confused_en": "pencil",
+      "confusion_count": 1
+    },
+    {
+      "class_id": 184,
+      "tr": "soz",
+      "en": "promise",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.8,
+      "most_confused_class_id": 178,
+      "most_confused_tr": "ses",
+      "most_confused_en": "voice",
+      "confusion_count": 3
+    },
+    {
+      "class_id": 195,
+      "tr": "terzi",
+      "en": "tailor",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.6,
+      "most_confused_class_id": 104,
+      "most_confused_tr": "kalorifer",
+      "most_confused_en": "radiator",
+      "confusion_count": 1
+    },
+    {
+      "class_id": 205,
+      "tr": "vergi",
+      "en": "tax",
+      "samples": 5,
+      "top1_accuracy": 0.0,
+      "top5_accuracy": 0.8,
+      "most_confused_class_id": 188,
+      "most_confused_tr": "tarih",
+      "most_confused_en": "date",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 12,
+      "tr": "alisveris",
+      "en": "shopping",
+      "samples": 5,
+      "top1_accuracy": 0.2,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 46,
+      "most_confused_tr": "cuzdan",
+      "most_confused_en": "wallet",
+      "confusion_count": 1
+    },
+    {
+      "class_id": 47,
+      "tr": "dakika",
+      "en": "minute",
+      "samples": 5,
+      "top1_accuracy": 0.2,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 128,
+      "most_confused_tr": "masallah",
+      "most_confused_en": "god_preserve",
+      "confusion_count": 1
+    },
+    {
+      "class_id": 49,
+      "tr": "degistirmek",
+      "en": "change",
+      "samples": 5,
+      "top1_accuracy": 0.2,
+      "top5_accuracy": 0.8,
+      "most_confused_class_id": 192,
+      "most_confused_tr": "tehlike",
+      "most_confused_en": "danger",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 53,
+      "tr": "dolu",
+      "en": "full",
+      "samples": 5,
+      "top1_accuracy": 0.2,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 48,
+      "most_confused_tr": "dede",
+      "most_confused_en": "grandfather",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 67,
+      "tr": "ezberlemek",
+      "en": "memorize",
+      "samples": 5,
+      "top1_accuracy": 0.2,
+      "top5_accuracy": 0.8,
+      "most_confused_class_id": 9,
+      "most_confused_tr": "akilli",
+      "most_confused_en": "wise",
+      "confusion_count": 2
+    }
+  ],
+  "top_confusions": [
+    {
+      "true_class_id": 153,
+      "true_tr": "pantolon",
+      "true_en": "trousers",
+      "predicted_class_id": 109,
+      "predicted_tr": "kemer",
+      "predicted_en": "belt",
+      "count": 4
+    },
+    {
+      "true_class_id": 221,
+      "true_tr": "yol",
+      "true_en": "road",
+      "predicted_class_id": 80,
+      "predicted_tr": "hakli",
+      "predicted_en": "right",
+      "count": 3
+    },
+    {
+      "true_class_id": 164,
+      "true_tr": "rica_etmek",
+      "true_en": "request",
+      "predicted_class_id": 3,
+      "predicted_tr": "afiyet_olsun",
+      "predicted_en": "enjoy_your_meal",
+      "count": 3
+    },
+    {
+      "true_class_id": 184,
+      "true_tr": "soz",
+      "true_en": "promise",
+      "predicted_class_id": 178,
+      "predicted_tr": "ses",
+      "predicted_en": "voice",
+      "count": 3
+    },
+    {
+      "true_class_id": 190,
+      "true_tr": "tatli",
+      "true_en": "sweet",
+      "predicted_class_id": 116,
+      "predicted_tr": "kiz",
+      "predicted_en": "female",
+      "count": 3
+    },
+    {
+      "true_class_id": 110,
+      "true_tr": "keske",
+      "true_en": "if_only",
+      "predicted_class_id": 163,
+      "predicted_tr": "psikoloji",
+      "predicted_en": "psychology",
+      "count": 3
+    },
+    {
+      "true_class_id": 188,
+      "true_tr": "tarih",
+      "true_en": "date",
+      "predicted_class_id": 197,
+      "predicted_tr": "tornavida",
+      "predicted_en": "screwdriver",
+      "count": 3
+    },
+    {
+      "true_class_id": 203,
+      "true_tr": "uzgun",
+      "true_en": "sad",
+      "predicted_class_id": 160,
+      "predicted_tr": "persembe",
+      "predicted_en": "thursday",
+      "count": 3
+    },
+    {
+      "true_class_id": 139,
+      "true_tr": "nine",
+      "true_en": "grandmother",
+      "predicted_class_id": 95,
+      "predicted_tr": "igne",
+      "predicted_en": "needle",
+      "count": 2
+    },
+    {
+      "true_class_id": 49,
+      "true_tr": "degistirmek",
+      "true_en": "change",
+      "predicted_class_id": 192,
+      "predicted_tr": "tehlike",
+      "predicted_en": "danger",
+      "count": 2
+    },
+    {
+      "true_class_id": 182,
+      "true_tr": "siz",
+      "true_en": "you",
+      "predicted_class_id": 34,
+      "predicted_tr": "biz",
+      "predicted_en": "we",
+      "count": 2
+    },
+    {
+      "true_class_id": 86,
+      "true_tr": "hayir",
+      "true_en": "no",
+      "predicted_class_id": 101,
+      "predicted_tr": "kacmak",
+      "predicted_en": "escape",
+      "count": 2
+    },
+    {
+      "true_class_id": 45,
+      "true_tr": "cumartesi",
+      "true_en": "saturday",
+      "predicted_class_id": 121,
+      "predicted_tr": "kopru",
+      "predicted_en": "bridge",
+      "count": 2
+    },
+    {
+      "true_class_id": 225,
+      "true_tr": "zor",
+      "true_en": "difficult",
+      "predicted_class_id": 139,
+      "predicted_tr": "nine",
+      "predicted_en": "grandmother",
+      "count": 2
+    },
+    {
+      "true_class_id": 86,
+      "true_tr": "hayir",
+      "true_en": "no",
+      "predicted_class_id": 92,
+      "predicted_tr": "hic",
+      "predicted_en": "never",
+      "count": 2
+    },
+    {
+      "true_class_id": 53,
+      "true_tr": "dolu",
+      "true_en": "full",
+      "predicted_class_id": 48,
+      "predicted_tr": "dede",
+      "predicted_en": "grandfather",
+      "count": 2
+    },
+    {
+      "true_class_id": 6,
+      "true_tr": "agir",
+      "true_en": "heavy",
+      "predicted_class_id": 79,
+      "predicted_tr": "hafif",
+      "predicted_en": "lightweight",
+      "count": 2
+    },
+    {
+      "true_class_id": 66,
+      "true_tr": "evli",
+      "true_en": "married",
+      "predicted_class_id": 171,
+      "predicted_tr": "savas",
+      "predicted_en": "war",
+      "count": 2
+    },
+    {
+      "true_class_id": 107,
+      "true_tr": "kavsak",
+      "true_en": "crossroads",
+      "predicted_class_id": 192,
+      "predicted_tr": "tehlike",
+      "predicted_en": "danger",
+      "count": 2
+    },
+    {
+      "true_class_id": 134,
+      "true_tr": "mudur",
+      "true_en": "manager",
+      "predicted_class_id": 95,
+      "predicted_tr": "igne",
+      "predicted_en": "needle",
+      "count": 2
+    }
+  ],
+  "signers": [
+    {
+      "signer": "signer1",
+      "samples": 192,
+      "top1_accuracy": 0.6614583333333334,
+      "top5_accuracy": 0.8854166666666666
+    },
+    {
+      "signer": "signer11",
+      "samples": 188,
+      "top1_accuracy": 0.6170212765957447,
+      "top5_accuracy": 0.9042553191489362
+    },
+    {
+      "signer": "signer16",
+      "samples": 189,
+      "top1_accuracy": 0.3862433862433862,
+      "top5_accuracy": 0.6984126984126984
+    },
+    {
+      "signer": "signer18",
+      "samples": 187,
+      "top1_accuracy": 0.6470588235294118,
+      "top5_accuracy": 0.893048128342246
+    },
+    {
+      "signer": "signer25",
+      "samples": 191,
+      "top1_accuracy": 0.675392670157068,
+      "top5_accuracy": 0.8848167539267016
+    },
+    {
+      "signer": "signer35",
+      "samples": 183,
+      "top1_accuracy": 0.7213114754098361,
+      "top5_accuracy": 0.9234972677595629
+    }
+  ]
+}

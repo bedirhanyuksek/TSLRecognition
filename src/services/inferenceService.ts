@@ -27,8 +27,6 @@ export type BackendPrediction = {
 
 const REQUEST_TIMEOUT_MS = 1200;
 const DISCOVERY_PORT = 8000;
-const LOCAL_HOSTNAME_CANDIDATE = 'http://Bedirhan-MacBook-Air.local:8000';
-const HOTSPOT_BACKEND_CANDIDATE = 'http://10.177.14.24:8000';
 
 type TidNetworkModule = {
   getWifiIpAddress?: () => Promise<string | null>;
@@ -94,8 +92,6 @@ function fallbackSubnetCandidates(): string[] {
     '192.168.137',
     '172.20.10',
     '10.0.0',
-    '10.227.122',
-    '10.177.14',
   ].flatMap(prefix => hostsForPrefix(prefix));
 }
 
@@ -139,8 +135,6 @@ async function getDeviceWifiIpAddress(): Promise<string | null> {
 export async function discoverBackendUrl(currentUrl: string): Promise<string> {
   const directCandidates = [
     currentUrl,
-    HOTSPOT_BACKEND_CANDIDATE,
-    LOCAL_HOSTNAME_CANDIDATE,
     'http://10.0.2.2:8000',
   ].filter(Boolean);
 

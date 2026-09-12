@@ -4,13 +4,13 @@ Bu dosya, proje başka bir araçta veya başka bir hesapta devam ettirilebilsin 
 
 ## Mevcut Durum
 
-- Proje klasörü: `/Users/bedirhanyuksek/Documents/TIDSignRN`
-- Avatar Unity proje klasörü: `/Users/bedirhanyuksek/Documents/TIDAvatarUnity`
+- Proje klasörü: `<repo-root>`
+- Avatar Unity proje klasörü: `<unity-project>`
 - Mobil uygulama: React Native Android prototipi
 - Backend: FastAPI, repo içindeki `server/` klasöründe
 - Model çalıştırma şekli: İlk prototipte model telefonda değil, Mac üzerindeki FastAPI backend'de çalışıyor
 - Canlı tahmin akışı: Telefon kamerasından kısa frame pencereleri alınır, backend'e gönderilir, backend MediaPipe landmark çıkarır, sign gate + 226 sınıflı TCN model ile tahmin döner
-- Backend manuel URL örneği: `http://10.108.85.24:8000`
+- Backend manuel URL örneği: `http://<backend-host>:8000`
 - Son commit: `b964783 Add live prediction stabilization`
 
 ## Kullanılan Modeller
@@ -26,8 +26,8 @@ Not: `.pt` model dosyaları git'e girmemeli. `server/models/*.pt` gitignore içi
 ## Backend Başlatma
 
 ```bash
-cd /Users/bedirhanyuksek/Documents/TIDSignRN
-PYTHONPATH=server /Users/bedirhanyuksek/Downloads/ChatTSL-v2/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+cd <repo-root>
+PYTHONPATH=server .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 Backend kontrol:
@@ -51,13 +51,13 @@ http://MAC_WIFI_IP:8000
 Örnek:
 
 ```text
-http://10.108.85.24:8000
+http://<backend-host>:8000
 ```
 
 ## Mobil Uygulamayı Çalıştırma
 
 ```bash
-cd /Users/bedirhanyuksek/Documents/TIDSignRN
+cd <repo-root>
 npx react-native run-android
 ```
 
@@ -71,7 +71,7 @@ npx tsc --noEmit
 Android build kontrol:
 
 ```bash
-cd /Users/bedirhanyuksek/Documents/TIDSignRN/android
+cd <repo-root>/android
 ./gradlew assembleDebug
 ```
 
@@ -206,7 +206,7 @@ cd /Users/bedirhanyuksek/Documents/TIDSignRN/android
 - [x] Unity tarafı için yeni, ayrı proje aç
   - Mevcut eski Unity projesine dokunma
   - Avatar işi ayrı Unity projesinde yürüsün
-  - Proje: `/Users/bedirhanyuksek/Documents/TIDAvatarUnity`
+  - Proje: `<unity-project>`
   - Commit: `9b25a71 Create TID avatar Unity prototype`
 
 - [x] İlk avatar yaklaşımını seç
@@ -231,7 +231,7 @@ cd /Users/bedirhanyuksek/Documents/TIDSignRN/android
   - Kullanıcı metin yazar
   - Metin gloss dizisine çevrilir
   - Avatar sırayla gloss animasyonlarını oynatır
-  - Sahne: `/Users/bedirhanyuksek/Documents/TIDAvatarUnity/Assets/TIDAvatar/Scenes/AvatarPrototype.unity`
+  - Sahne: `<unity-project>/Assets/TIDAvatar/Scenes/AvatarPrototype.unity`
 
 - [ ] React Native ile Unity entegrasyon stratejisini belirle
   - Seçenek 1: Unity sahnesini ayrı Android Activity olarak açmak
@@ -302,7 +302,7 @@ git status --short
 ## Yeni Araçta Devam Etmek İçin İlk Komutlar
 
 ```bash
-cd /Users/bedirhanyuksek/Documents/TIDSignRN
+cd <repo-root>
 git status --short
 git log --oneline -n 5
 npm run lint
@@ -312,7 +312,7 @@ npx tsc --noEmit
 Backend'i aç:
 
 ```bash
-PYTHONPATH=server /Users/bedirhanyuksek/Downloads/ChatTSL-v2/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+PYTHONPATH=server .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 Mobil uygulamayı aç:

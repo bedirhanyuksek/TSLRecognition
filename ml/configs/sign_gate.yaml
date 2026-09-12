@@ -1,0 +1,27 @@
+seed: 42
+num_classes: 2
+
+data:
+  train_feature_mode: motion_gate_augmented
+  val_feature_mode: motion_gate
+  train_manifest: data/sign_gate/manifests/train.csv
+  train_landmarks: data/sign_gate/landmarks/train
+  val_manifest: data/sign_gate/manifests/val.csv
+  val_landmarks: data/sign_gate/landmarks/val
+
+model:
+  hidden_size: 128
+  dropout: 0.3
+
+training:
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0002
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  lr_factor: 0.5
+  lr_patience: 2
+  min_learning_rate: 0.000001
+  early_stopping_patience: 6
+  output_dir: outputs/sign_gate

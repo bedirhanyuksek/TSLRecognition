@@ -77,6 +77,10 @@ server/models/*.pt
 server/models/*.pth
 server/models/*.task
 
+# Production checkpoints
+!server/models/landmark_tcn_full.pt
+!server/models/sign_gate.pt
+
 # Yarn
 .yarn/*
 !.yarn/patches

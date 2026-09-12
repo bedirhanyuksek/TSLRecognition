@@ -1,0 +1,410 @@
+{
+  "checkpoint_epoch": 47,
+  "samples": 4418,
+  "top1_accuracy": 0.8822996831145314,
+  "top5_accuracy": 0.9775916704391128,
+  "perfect_classes": 76,
+  "zero_accuracy_classes": 0,
+  "worst_classes": [
+    {
+      "class_id": 6,
+      "tr": "agir",
+      "en": "heavy",
+      "samples": 13,
+      "top1_accuracy": 0.23076923076923078,
+      "top5_accuracy": 0.9230769230769231,
+      "most_confused_class_id": 79,
+      "most_confused_tr": "hafif",
+      "most_confused_en": "lightweight",
+      "confusion_count": 8
+    },
+    {
+      "class_id": 16,
+      "tr": "ataturk",
+      "en": "ataturk",
+      "samples": 20,
+      "top1_accuracy": 0.3,
+      "top5_accuracy": 0.95,
+      "most_confused_class_id": 172,
+      "most_confused_tr": "seker",
+      "most_confused_en": "sugar",
+      "confusion_count": 9
+    },
+    {
+      "class_id": 47,
+      "tr": "dakika",
+      "en": "minute",
+      "samples": 20,
+      "top1_accuracy": 0.45,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 52,
+      "most_confused_tr": "doktor",
+      "most_confused_en": "doctor",
+      "confusion_count": 9
+    },
+    {
+      "class_id": 97,
+      "tr": "ilgilenmemek",
+      "en": "not_interested",
+      "samples": 20,
+      "top1_accuracy": 0.5,
+      "top5_accuracy": 0.9,
+      "most_confused_class_id": 161,
+      "most_confused_tr": "piknik",
+      "most_confused_en": "picnic",
+      "confusion_count": 3
+    },
+    {
+      "class_id": 111,
+      "tr": "kim",
+      "en": "who",
+      "samples": 20,
+      "top1_accuracy": 0.5,
+      "top5_accuracy": 0.95,
+      "most_confused_class_id": 22,
+      "most_confused_tr": "bakmak",
+      "most_confused_en": "look",
+      "confusion_count": 3
+    },
+    {
+      "class_id": 206,
+      "tr": "yakin",
+      "en": "near",
+      "samples": 18,
+      "top1_accuracy": 0.5,
+      "top5_accuracy": 0.9444444444444444,
+      "most_confused_class_id": 19,
+      "most_confused_tr": "ayni",
+      "most_confused_en": "same",
+      "confusion_count": 5
+    },
+    {
+      "class_id": 165,
+      "tr": "saat",
+      "en": "hour",
+      "samples": 20,
+      "top1_accuracy": 0.55,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 52,
+      "most_confused_tr": "doktor",
+      "most_confused_en": "doctor",
+      "confusion_count": 6
+    },
+    {
+      "class_id": 221,
+      "tr": "yol",
+      "en": "road",
+      "samples": 20,
+      "top1_accuracy": 0.55,
+      "top5_accuracy": 0.75,
+      "most_confused_class_id": 130,
+      "most_confused_tr": "memnun_olmak",
+      "most_confused_en": "be_pleased",
+      "confusion_count": 5
+    },
+    {
+      "class_id": 95,
+      "tr": "igne",
+      "en": "needle",
+      "samples": 12,
+      "top1_accuracy": 0.5833333333333334,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 134,
+      "most_confused_tr": "mudur",
+      "most_confused_en": "manager",
+      "confusion_count": 4
+    },
+    {
+      "class_id": 96,
+      "tr": "ilac",
+      "en": "medicine",
+      "samples": 17,
+      "top1_accuracy": 0.5882352941176471,
+      "top5_accuracy": 0.7058823529411765,
+      "most_confused_class_id": 61,
+      "most_confused_tr": "emekli",
+      "most_confused_en": "retired",
+      "confusion_count": 2
+    },
+    {
+      "class_id": 8,
+      "tr": "aile",
+      "en": "family",
+      "samples": 20,
+      "top1_accuracy": 0.6,
+      "top5_accuracy": 0.95,
+      "most_confused_class_id": 52,
+      "most_confused_tr": "doktor",
+      "most_confused_en": "doctor",
+      "confusion_count": 3
+    },
+    {
+      "class_id": 37,
+      "tr": "catal",
+      "en": "fork",
+      "samples": 20,
+      "top1_accuracy": 0.6,
+      "top5_accuracy": 0.85,
+      "most_confused_class_id": 197,
+      "most_confused_tr": "tornavida",
+      "most_confused_en": "screwdriver",
+      "confusion_count": 6
+    },
+    {
+      "class_id": 65,
+      "tr": "evet",
+      "en": "yes",
+      "samples": 20,
+      "top1_accuracy": 0.6,
+      "top5_accuracy": 0.95,
+      "most_confused_class_id": 93,
+      "most_confused_tr": "hoscakal",
+      "most_confused_en": "goodbye",
+      "confusion_count": 7
+    },
+    {
+      "class_id": 91,
+      "tr": "hep",
+      "en": "always",
+      "samples": 20,
+      "top1_accuracy": 0.6,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 99,
+      "most_confused_tr": "itmek",
+      "most_confused_en": "push",
+      "confusion_count": 4
+    },
+    {
+      "class_id": 126,
+      "tr": "makas",
+      "en": "scissors",
+      "samples": 20,
+      "top1_accuracy": 0.6,
+      "top5_accuracy": 1.0,
+      "most_confused_class_id": 43,
+      "most_confused_tr": "corba",
+      "most_confused_en": "soup",
+      "confusion_count": 4
+    }
+  ],
+  "top_confusions": [
+    {
+      "true_class_id": 47,
+      "true_tr": "dakika",
+      "true_en": "minute",
+      "predicted_class_id": 52,
+      "predicted_tr": "doktor",
+      "predicted_en": "doctor",
+      "count": 9
+    },
+    {
+      "true_class_id": 16,
+      "true_tr": "ataturk",
+      "true_en": "ataturk",
+      "predicted_class_id": 172,
+      "predicted_tr": "seker",
+      "predicted_en": "sugar",
+      "count": 9
+    },
+    {
+      "true_class_id": 6,
+      "true_tr": "agir",
+      "true_en": "heavy",
+      "predicted_class_id": 79,
+      "predicted_tr": "hafif",
+      "predicted_en": "lightweight",
+      "count": 8
+    },
+    {
+      "true_class_id": 65,
+      "true_tr": "evet",
+      "true_en": "yes",
+      "predicted_class_id": 93,
+      "predicted_tr": "hoscakal",
+      "predicted_en": "goodbye",
+      "count": 7
+    },
+    {
+      "true_class_id": 220,
+      "true_tr": "yok",
+      "true_en": "absent",
+      "predicted_class_id": 28,
+      "predicted_tr": "bekar",
+      "predicted_en": "single",
+      "count": 6
+    },
+    {
+      "true_class_id": 165,
+      "true_tr": "saat",
+      "true_en": "hour",
+      "predicted_class_id": 52,
+      "predicted_tr": "doktor",
+      "predicted_en": "doctor",
+      "count": 6
+    },
+    {
+      "true_class_id": 37,
+      "true_tr": "catal",
+      "true_en": "fork",
+      "predicted_class_id": 197,
+      "predicted_tr": "tornavida",
+      "predicted_en": "screwdriver",
+      "count": 6
+    },
+    {
+      "true_class_id": 221,
+      "true_tr": "yol",
+      "true_en": "road",
+      "predicted_class_id": 130,
+      "predicted_tr": "memnun_olmak",
+      "predicted_en": "be_pleased",
+      "count": 5
+    },
+    {
+      "true_class_id": 206,
+      "true_tr": "yakin",
+      "true_en": "near",
+      "predicted_class_id": 19,
+      "predicted_tr": "ayni",
+      "predicted_en": "same",
+      "count": 5
+    },
+    {
+      "true_class_id": 98,
+      "true_tr": "isik",
+      "true_en": "light",
+      "predicted_class_id": 143,
+      "predicted_tr": "ogretmen",
+      "predicted_en": "teacher",
+      "count": 5
+    },
+    {
+      "true_class_id": 23,
+      "true_tr": "bal",
+      "true_en": "honey",
+      "predicted_class_id": 112,
+      "predicted_tr": "kimlik",
+      "predicted_en": "identity",
+      "count": 4
+    },
+    {
+      "true_class_id": 195,
+      "true_tr": "terzi",
+      "true_en": "tailor",
+      "predicted_class_id": 81,
+      "predicted_tr": "hali",
+      "predicted_en": "carpet",
+      "count": 4
+    },
+    {
+      "true_class_id": 91,
+      "true_tr": "hep",
+      "true_en": "always",
+      "predicted_class_id": 99,
+      "predicted_tr": "itmek",
+      "predicted_en": "push",
+      "count": 4
+    },
+    {
+      "true_class_id": 144,
+      "true_tr": "okul",
+      "true_en": "school",
+      "predicted_class_id": 29,
+      "predicted_tr": "beklemek",
+      "predicted_en": "wait",
+      "count": 4
+    },
+    {
+      "true_class_id": 166,
+      "true_tr": "sabun",
+      "true_en": "soap",
+      "predicted_class_id": 17,
+      "predicted_tr": "ayakkabi",
+      "predicted_en": "shoe",
+      "count": 4
+    },
+    {
+      "true_class_id": 95,
+      "true_tr": "igne",
+      "true_en": "needle",
+      "predicted_class_id": 134,
+      "predicted_tr": "mudur",
+      "predicted_en": "manager",
+      "count": 4
+    },
+    {
+      "true_class_id": 52,
+      "true_tr": "doktor",
+      "true_en": "doctor",
+      "predicted_class_id": 224,
+      "predicted_tr": "zaman",
+      "predicted_en": "time",
+      "count": 4
+    },
+    {
+      "true_class_id": 126,
+      "true_tr": "makas",
+      "true_en": "scissors",
+      "predicted_class_id": 43,
+      "predicted_tr": "corba",
+      "predicted_en": "soup",
+      "count": 4
+    },
+    {
+      "true_class_id": 16,
+      "true_tr": "ataturk",
+      "true_en": "ataturk",
+      "predicted_class_id": 156,
+      "predicted_tr": "patates",
+      "predicted_en": "potato",
+      "count": 4
+    },
+    {
+      "true_class_id": 17,
+      "true_tr": "ayakkabi",
+      "true_en": "shoe",
+      "predicted_class_id": 166,
+      "predicted_tr": "sabun",
+      "predicted_en": "soap",
+      "count": 4
+    }
+  ],
+  "signers": [
+    {
+      "signer": "signer1",
+      "samples": 1344,
+      "top1_accuracy": 0.9122023809523809,
+      "top5_accuracy": 0.9903273809523809
+    },
+    {
+      "signer": "signer11",
+      "samples": 669,
+      "top1_accuracy": 0.8699551569506726,
+      "top5_accuracy": 0.976083707025411
+    },
+    {
+      "signer": "signer16",
+      "samples": 436,
+      "top1_accuracy": 0.6720183486238532,
+      "top5_accuracy": 0.9197247706422018
+    },
+    {
+      "signer": "signer18",
+      "samples": 663,
+      "top1_accuracy": 0.918552036199095,
+      "top5_accuracy": 0.9773755656108597
+    },
+    {
+      "signer": "signer25",
+      "samples": 652,
+      "top1_accuracy": 0.9003067484662577,
+      "top5_accuracy": 0.9800613496932515
+    },
+    {
+      "signer": "signer35",
+      "samples": 654,
+      "top1_accuracy": 0.918960244648318,
+      "top5_accuracy": 0.9892966360856269
+    }
+  ]
+}

@@ -73,7 +73,7 @@ function MainApp() {
   const [cameraPosition, setCameraPosition] = useState<CameraPosition>('front');
   const [confidenceThreshold, setConfidenceThreshold] = useState(0.8);
   const [modelMode, setModelMode] = useState<'server' | 'device'>('server');
-  const [backendUrl, setBackendUrl] = useState('http://10.177.14.24:8000');
+  const [backendUrl, setBackendUrl] = useState('http://localhost:8000');
   const [backendStatus, setBackendStatus] = useState<BackendStatus>({
     state: 'idle',
     message: 'Test edilmedi',

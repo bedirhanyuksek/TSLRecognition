@@ -1,0 +1,11 @@
+{
+  "frames": 64,
+  "max_classes": 20,
+  "batch_size": 32,
+  "epochs": 30,
+  "learning_rate": 0.0003,
+  "d_model": 192,
+  "num_heads": 4,
+  "num_layers": 4,
+  "dropout": 0.2
+}

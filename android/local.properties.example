@@ -1,0 +1,6 @@
+sdk.dir=/path/to/Android/sdk
+unityProjectPath=/path/to/TIDAvatarUnity
+unity.projectPath=/path/to/TIDAvatarUnity
+unity.androidSdkPath=/path/to/Android/sdk
+unity.androidNdkPath=/path/to/Android/ndk
+unity.jdkPath=/path/to/JDK

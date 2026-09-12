@@ -1,0 +1,134 @@
+{
+  "samples": 3742,
+  "device": "mps",
+  "word_top1_accuracy": 0.8655799037947621,
+  "word_top5_accuracy": 0.9823623730625334,
+  "gate_sign_recall_at_0.8": 0.9997327632282202,
+  "gate_rejected_sign_videos": 1,
+  "combined_top1_accuracy": 0.8655799037947621,
+  "combined_top5_accuracy": 0.9823623730625334,
+  "rejected_sign_probability_min": 0.6840770244598389,
+  "rejected_sign_probability_max": 0.6840770244598389,
+  "lowest_gate_pass_classes": [
+    {
+      "class_id": 135,
+      "label": "musluk",
+      "samples": 17,
+      "gate_pass_rate": 0.9411764705882353,
+      "word_accuracy": 0.8823529411764706,
+      "combined_accuracy": 0.8823529411764706
+    },
+    {
+      "class_id": 133,
+      "label": "misafir",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 1.0,
+      "combined_accuracy": 1.0
+    },
+    {
+      "class_id": 61,
+      "label": "emekli",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.9411764705882353,
+      "combined_accuracy": 0.9411764705882353
+    },
+    {
+      "class_id": 32,
+      "label": "beraber",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.7058823529411765,
+      "combined_accuracy": 0.7058823529411765
+    },
+    {
+      "class_id": 169,
+      "label": "sampiyon",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.7058823529411765,
+      "combined_accuracy": 0.7058823529411765
+    },
+    {
+      "class_id": 77,
+      "label": "gostermek",
+      "samples": 16,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 1.0,
+      "combined_accuracy": 1.0
+    },
+    {
+      "class_id": 131,
+      "label": "mendil",
+      "samples": 14,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.8571428571428571,
+      "combined_accuracy": 0.8571428571428571
+    },
+    {
+      "class_id": 114,
+      "label": "kitap",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.8235294117647058,
+      "combined_accuracy": 0.8235294117647058
+    },
+    {
+      "class_id": 143,
+      "label": "ogretmen",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 1.0,
+      "combined_accuracy": 1.0
+    },
+    {
+      "class_id": 194,
+      "label": "terazi",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.8823529411764706,
+      "combined_accuracy": 0.8823529411764706
+    },
+    {
+      "class_id": 23,
+      "label": "bal",
+      "samples": 16,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.8125,
+      "combined_accuracy": 0.8125
+    },
+    {
+      "class_id": 95,
+      "label": "igne",
+      "samples": 15,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.8666666666666667,
+      "combined_accuracy": 0.8666666666666667
+    },
+    {
+      "class_id": 57,
+      "label": "duvar",
+      "samples": 16,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.75,
+      "combined_accuracy": 0.75
+    },
+    {
+      "class_id": 47,
+      "label": "dakika",
+      "samples": 14,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 0.35714285714285715,
+      "combined_accuracy": 0.35714285714285715
+    },
+    {
+      "class_id": 26,
+      "label": "bayram",
+      "samples": 17,
+      "gate_pass_rate": 1.0,
+      "word_accuracy": 1.0,
+      "combined_accuracy": 1.0
+    }
+  ]
+}

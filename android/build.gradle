@@ -18,4 +18,16 @@ buildscript {
     }
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+allprojects {
+    localProperties.each { key, value ->
+        ext.set(key.toString(), value)
+    }
+}
+
 apply plugin: "com.facebook.react.rootproject"
