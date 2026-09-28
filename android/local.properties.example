@@ -1,4 +1,5 @@
 sdk.dir=/path/to/Android/sdk
+enableUnityAvatar=false
 unityProjectPath=/path/to/TIDAvatarUnity
 unity.projectPath=/path/to/TIDAvatarUnity
 unity.androidSdkPath=/path/to/Android/sdk

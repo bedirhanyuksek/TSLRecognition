@@ -3,6 +3,28 @@ plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'TIDSignRN'
 include ':app'
-include ':unityLibrary'
-project(':unityLibrary').projectDir = new File(rootProject.projectDir, 'unityExport/unityLibrary')
+
+def localProperties = new Properties()
+def localPropertiesFile = new File(rootDir, 'local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+def unityAvatarRequested = localProperties.getProperty('enableUnityAvatar', 'false').toBoolean()
+def unityLibraryDir = new File(rootDir, 'unityExport/unityLibrary')
+def unityExportAvailable = new File(unityLibraryDir, 'build.gradle').isFile()
+def unityAvatarEnabled = unityAvatarRequested && unityExportAvailable
+
+gradle.ext.unityAvatarEnabled = unityAvatarEnabled
+
+if (unityAvatarRequested && !unityExportAvailable) {
+    logger.warn('Unity avatar requested but android/unityExport/unityLibrary is missing; continuing with the optional module disabled.')
+}
+
+println "Unity avatar: ${unityAvatarEnabled ? 'ENABLED' : 'DISABLED'}"
+
+if (unityAvatarEnabled) {
+    include ':unityLibrary'
+    project(':unityLibrary').projectDir = unityLibraryDir
+}
 includeBuild('../node_modules/@react-native/gradle-plugin')

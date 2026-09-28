@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Keyboard,
   Pressable,
   ScrollView,
@@ -13,6 +14,7 @@ import { Card } from '../components/Card';
 import { GlossChip } from '../components/GlossChip';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SectionLabel } from '../components/SectionLabel';
+import { isUnityAvatarAvailable } from '../services/avatarService';
 import { palette } from '../theme/palette';
 
 type Props = {
@@ -47,6 +49,27 @@ export function AvatarScreen({
   const inputRef = useRef<TextInput>(null);
   const [inputY, setInputY] = useState(0);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [unityAvailable, setUnityAvailable] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    isUnityAvatarAvailable()
+      .then(available => {
+        if (mounted) {
+          setUnityAvailable(available);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setUnityAvailable(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   function scrollToInput() {
     scrollRef.current?.scrollTo({
@@ -88,13 +111,38 @@ export function AvatarScreen({
       </View>
 
       <Card>
-        <AvatarStage activeGloss={activeGloss} />
+        {unityAvailable === true ? (
+          <AvatarStage activeGloss={activeGloss} />
+        ) : unityAvailable === false ? (
+          <View style={styles.moduleFallback}>
+            <View style={styles.moduleMark}>
+              <Text style={styles.moduleMarkText}>3D</Text>
+            </View>
+            <Text style={styles.moduleTitle}>3D Sign Avatar</Text>
+            <Text style={styles.moduleBody}>
+              This feature uses an optional Unity module for real-time avatar
+              rendering. Configure the Unity runtime package to enable the
+              interactive avatar.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.moduleLoading}>
+            <ActivityIndicator color={palette.accent} />
+          </View>
+        )}
 
         <View style={styles.playbackRow}>
           <Pressable style={styles.iconButton} onPress={onPrevious}>
             <Text style={styles.iconButtonText}>‹</Text>
           </Pressable>
-          <Pressable style={styles.playButton} onPress={onPlayToggle}>
+          <Pressable
+            disabled={unityAvailable !== true}
+            style={[
+              styles.playButton,
+              unityAvailable !== true && styles.playButtonDisabled,
+            ]}
+            onPress={onPlayToggle}
+          >
             <Text style={styles.playButtonText}>
               {isPlaying ? 'Duraklat' : 'Oynat'}
             </Text>
@@ -182,6 +230,51 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 2,
   },
+  moduleLoading: {
+    alignItems: 'center',
+    backgroundColor: '#E0DDD8',
+    borderRadius: 12,
+    height: 318,
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  moduleFallback: {
+    alignItems: 'center',
+    backgroundColor: '#E0DDD8',
+    borderRadius: 12,
+    height: 318,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    paddingHorizontal: 22,
+  },
+  moduleMark: {
+    alignItems: 'center',
+    backgroundColor: palette.accentSoft,
+    borderRadius: 12,
+    height: 52,
+    justifyContent: 'center',
+    marginBottom: 18,
+    width: 52,
+  },
+  moduleMarkText: {
+    color: palette.accent,
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  moduleTitle: {
+    color: palette.text,
+    fontSize: 19,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  moduleBody: {
+    color: palette.secondary,
+    fontSize: 14,
+    lineHeight: 21,
+    marginTop: 10,
+    maxWidth: 360,
+    textAlign: 'center',
+  },
   playbackRow: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -213,6 +306,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '800',
+  },
+  playButtonDisabled: {
+    opacity: 0.45,
   },
   progressText: {
     color: palette.secondary,
