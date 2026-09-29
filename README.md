@@ -34,28 +34,6 @@ does not currently implement on-device ML inference.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    A[React Native camera]
-    B[8-frame capture window]
-    C[FastAPI /predict/frames]
-    D[24-frame resampling]
-    E[MediaPipe Holistic]
-    F[429-feature sign gate]
-    G[300-feature 226-class TCN]
-    H[Confidence and quality filtering]
-    I[Mobile prediction stabilization]
-    J[Turkish text and Android speech]
-    K[Optional Unity avatar]
-
-    A --> B --> C --> D --> E
-    E --> F
-    E --> G
-    F --> H
-    G --> H --> I --> J
-    I --> K
-```
-
 The mobile client captures eight JPEG snapshots with a 90 ms delay between
 captures.
 The backend decodes the uploaded sequence and resamples it to the 24 frames
@@ -256,18 +234,13 @@ dataset ownership or redistribution claim.
 
 ## Optional 3D Sign Avatar
 
-The Android client contains an embedded Unity view integration for interactive
-avatar playback. Local Unity-enabled builds can load the exported runtime and
-use the existing avatar controls. The default clean-clone configuration keeps
-Unity disabled, allowing Android to build without the export; the Avatar screen
-retains its normal controls and shows an explanatory card only in the 3D render
-area.
+The Android client includes an optional embedded Unity avatar module for sign
+playback. Unity-enabled local builds can render the interactive avatar, while
+clean-clone builds remain fully functional without the Unity runtime and show a
+fallback card in the avatar area.
 
-Third-party avatar, animation, and Unity runtime source assets are not included
-in this repository. The module remains an optional, actively developed output
-path rather than part of the recognition model. Local enablement requires a
-Unity export under `mobile/android/unityExport/` and `enableUnityAvatar=true`
-in the ignored `mobile/android/local.properties` file.
+The Unity runtime export is managed separately under
+`mobile/android/unityExport/` and is not tracked in this repository.
 
 ## Tech Stack
 
