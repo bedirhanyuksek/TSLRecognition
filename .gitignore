@@ -34,8 +34,8 @@ local.properties
 *.keystore
 !debug.keystore
 .kotlin/
-android/unityExport/
-android/unityLibrary/
+mobile/android/unityExport/
+mobile/android/unityLibrary/
 
 # node.js
 #
@@ -64,13 +64,13 @@ __pycache__/
 
 # Ruby / CocoaPods
 **/Pods/
-/vendor/bundle/
+/mobile/vendor/bundle/
 
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
 
 # testing
-/coverage
+/mobile/coverage
 
 # Inference backend model artifacts
 server/models/*.pt

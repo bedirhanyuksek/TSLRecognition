@@ -137,7 +137,10 @@ two runs retain evaluation JSON and summaries, but not their checkpoints.
 
 ```text
 .
-├── src/                         # React Native screens, services, and UI logic
+├── mobile/                      # React Native Android client and iOS scaffold
+│   ├── src/                     # Screens, services, and UI logic
+│   ├── android/                 # Android app and optional Unity integration
+│   └── ios/                     # iOS scaffold (not validated end to end)
 ├── server/
 │   ├── app/                     # FastAPI routes and inference pipeline
 │   ├── models/                  # Production checkpoints and class metadata
@@ -148,10 +151,8 @@ two runs retain evaluation JSON and summaries, but not their checkpoints.
 │   ├── evaluation/              # Preserved final and experimental metrics
 │   ├── experiments/transformer20/
 │   └── tests/
-├── android/                     # Android app and optional Unity integration
-├── ios/                         # React Native iOS scaffold (not validated end to end)
-├── App.tsx                      # Mobile application orchestration
-└── UNITY_AVATAR_INTEGRATION.md
+├── README.md
+└── .gitignore
 ```
 
 ## Setup
@@ -188,9 +189,10 @@ the expected MediaPipe asset checksum.
 
 ### Mobile Client
 
-Install dependencies and start Metro from the repository root:
+Install dependencies and start Metro from the mobile project directory:
 
 ```bash
+cd mobile
 npm ci
 npm start
 ```
@@ -198,6 +200,7 @@ npm start
 In another terminal, run Android:
 
 ```bash
+cd mobile
 npm run android
 ```
 
@@ -263,10 +266,8 @@ area.
 Third-party avatar, animation, and Unity runtime source assets are not included
 in this repository. The module remains an optional, actively developed output
 path rather than part of the recognition model. Local enablement requires a
-Unity export under `android/unityExport/` and `enableUnityAvatar=true` in the
-ignored `android/local.properties` file. Implementation notes are retained in
-the historical
-[`UNITY_AVATAR_INTEGRATION.md`](UNITY_AVATAR_INTEGRATION.md) document.
+Unity export under `mobile/android/unityExport/` and `enableUnityAvatar=true`
+in the ignored `mobile/android/local.properties` file.
 
 ## Tech Stack
 
